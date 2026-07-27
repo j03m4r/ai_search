@@ -1,0 +1,15 @@
+[Unit]
+Description=AISearch SerpAPI proxy
+After=network.target
+
+[Service]
+Type=simple
+# TODO: set this to the absolute path of vueAISearch on the VM
+WorkingDirectory=/TODO/REPO/PATH/vueAISearch
+ExecStart=/usr/bin/node src/server.js
+Restart=on-failure
+# TODO: set this to a non-root service user on the VM
+User=TODO_SERVICE_USER
+
+[Install]
+WantedBy=multi-user.target

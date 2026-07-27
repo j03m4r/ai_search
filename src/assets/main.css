@@ -1,0 +1,12 @@
+@import './base.css';
+@import "tailwindcss";
+
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #faf9f6 !important;
+  color: #000;
+}

@@ -1,0 +1,44 @@
+<script setup lang="ts">
+    const emit = defineEmits<{
+        (e: 'nextStep'): void;
+    }>();
+</script>
+<template v-else-if="step === 4">
+    <div class="flex flex-col items-center w-7xl h-screen">
+        <div class="sticky top-0 w-full flex justify-center items-center bg-[#faf9f6] py-6">
+            <h2 class="text-3xl font-bold! sticky top-0 w-7xl bg-[#faf9f6] text-gray-600">Task Description</h2>
+        </div>
+        <div class="text-gray-600 flex flex-col gap-y-6 w-full">
+            <p class="text-xl">
+                We will now introduce you to the main task of this study. Your task is to search for and map out the competing considerations for a policy decision:
+                <b class="font-bold!">whether to adopt nuclear energy.</b>
+            </p>
+
+            <p class="text-xl">
+                Major policy decisions such as this one involve weighing many competing considerations: for example,
+                scientific, economic, social, and political. Policymakers who understand a diverse set of
+                considerations tend to make better decisions than those who only see one side. Therefore,
+                in this study, <b class="font-bold!">we want to understand how the framing of information online influences the
+                factors that people consider</b>. The information map that you develop will be combined with
+                and compared against others to show us what the collective understanding of this topic looks like.
+            </p>
+
+            <p class="text-xl">
+                <b class="font-bold!">Use the provided search tool to explore what is at stake with the adoption of nuclear energy.</b>
+                As you search, you should build out your concept map. Organize this map around higher-level
+                dimensions (major categories of concern) and support each one with specific details you find.
+            </p>
+        </div>
+
+        <div
+            class="shadow fixed bottom-12 flex justify-center items-center border p-1 rounded-2xl bg-white border-gray-300">
+            <button @click="emit('nextStep')"
+              class=" px-6 py-6 bg-indigo-500 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed
+                text-white rounded-xl flex gap-x-2 justify-center items-center text-lg cursor-pointer
+                hover:bg-indigo-600 transition-colors">
+                Proceed
+            </button>
+        </div>
+
+    </div>
+</template>

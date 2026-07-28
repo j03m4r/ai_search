@@ -240,7 +240,7 @@
     }
 
     function onNodeDrag({ node }) {
-        if (node.type !== 'category') return;
+        // if (node.type !== 'category') return;
         clampToCanvas(node);
     }
 

@@ -105,7 +105,7 @@
     </div>
     <div class="flex flex-col gap-3! w-full">
         <p class="text-gray-600 text-xl">
-            For the following search tasks, specify whether you would use traditional link-based search tools (e.g., Google, Bing) or AI/LLM search tools (e.g., AI Overviews, AI Search Mode, ChatGPT)
+            For the search tasks listed below, specify whether you would use traditional link-based search tools (e.g., Google, Bing) or AI/LLM search tools (e.g., AI Overviews, AI Search Mode, ChatGPT)
         </p>
 
         <SurveyLikert :likertOptions="preferenceLikertOptions" :statements="preferenceStatements" :ratings="preferenceResponses"

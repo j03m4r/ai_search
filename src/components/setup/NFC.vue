@@ -12,11 +12,11 @@
     ];
 
     const nfcLikertOptions = [
-        { label: 'Extremely Uncharacteristic ', val: 1 },
+        { label: 'Extremely uncharacteristic ', val: 1 },
         { label: 'Uncharacteristic', val: 2 },
-        { label: 'Neither agree nor disagree', val: 3 },
-        { label: 'Moderately agree', val: 4 },
-        { label: 'Strongly agree', val: 5 },
+        { label: 'Neither characteristic nor uncharacteristic', val: 3 },
+        { label: 'Characteristic', val: 4 },
+        { label: 'Extremely characteristic', val: 5 },
     ]
 
     const nfcResponses = ref(Array(nfcStatements.length).fill(null));

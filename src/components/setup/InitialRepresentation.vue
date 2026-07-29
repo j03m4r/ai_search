@@ -1,7 +1,8 @@
 <script setup lang="ts">
-    import { ref, computed } from 'vue';
+    import { ref, computed, onMounted, onUnmounted, useTemplateRef } from 'vue';
     import ExampleDimension from './ExampleDimension.vue';
     import LeftOrganizer from '../LeftOrganizer.vue';
+    import { useTour } from '@/composables/useTour.js';
 
     export interface category {
         id: string;
@@ -35,16 +36,42 @@
         representation.value = categories;
         emit('updateInitialRepresentation', representation.value)
     }
+
+    const canvasWrapper = useTemplateRef('canvasWrapper');
+    const { startRepresentationTour } = useTour();
+    let observer: IntersectionObserver | null = null;
+
+
+    onMounted(() => {
+        if (localStorage.getItem('representation_tour_seen')) return;
+
+        observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0];
+                if (entry.isIntersecting) {
+                    startRepresentationTour(() => {
+                        localStorage.setItem('representation_tour_seen', 'true');
+                    });
+                    observer?.disconnect();
+                }
+            },
+            { threshold: 0.8 }
+        );
+
+        if (canvasWrapper.value) observer.observe(canvasWrapper.value);
+    });
+
+    onUnmounted(() => observer?.disconnect());
 </script>
 
 <template v-else-if="step === 5">
-    <div class="sticky top-0 w-full flex justify-start items-center bg-[#faf9f6] py-6">
+    <div class="sticky top-0 w-full flex justify-start items-center bg-[#faf9f6] py-6 z-50">
         <h2 class="text-3xl font-bold! sticky top-0 bg-[#faf9f6] text-gray-600">Your Initial Understanding</h2>
     </div>
 
     <div class="flex flex-col items-center gap-4 w-full">
 
-        <div class="text-gray-600 text-xl gap-y-6 flex flex-col">
+        <div class="text-gray-600 text-2xl! gap-y-6 flex flex-col">
             <p>
                 Before searching, we want to capture your starting point. <b class="font-bold!">What do you think are
                     the most
@@ -63,12 +90,13 @@
             <p>
                 Use this same structure for nuclear energy: name each dimension, then describe what you
                 know about them. There are no wrong answers — we just want your honest starting point. Remember, you are
-                doing this to map out the competing considerations for <b class="font-bold!">whether to adopt nuclear
-                    energy.</b>
+                doing this to map out the competing considerations for whether to adopt nuclear
+                    energy. <b class="font-bold! text-red-500">You must create at least two
+            categories to continue</b>
             </p>
         </div>
 
-        <div class="w-full flex h-[60vh]">
+        <div ref="canvasWrapper" class="w-full flex h-[60vh]">
             <LeftOrganizer :hide-buttons="true" @update-representation="updateRepresentation" />
         </div>
 

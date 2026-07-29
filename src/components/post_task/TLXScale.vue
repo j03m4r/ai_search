@@ -30,7 +30,7 @@ function onInput(e: Event) {
 
 <template>
     <div class="w-full flex flex-col gap-y-3 py-6 text-gray-600 z-0!">
-        <p class="font-semibold!">{{ statement }}</p>
+        <p class="font-semibold! text-lg">{{ statement }}</p>
 
         <div class="flex flex-col gap-y-1">
             <input

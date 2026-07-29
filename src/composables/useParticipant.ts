@@ -27,13 +27,19 @@ async function initParticipant() {
         localStorage.removeItem("participant_token");
         return initParticipant();
     }
+
     const status = await res.json();
     condition.value = status.condition;
     phase.value = status.phase;
 
-    const isScreenout = localStorage.getItem("screenout")
+    const isScreenout = localStorage.getItem("so")
     if (isScreenout === "yes") {
         phase.value = "screenout";
+    }
+
+    const numFailedAttentionChecks = parseInt(localStorage.getItem("fac") || "0", 10)
+    if (numFailedAttentionChecks >= 2) {
+        phase.value = "rejected";
     }
 }
 
@@ -48,13 +54,24 @@ async function submitPreTaskData(payload: object) {
     phase.value = "main"
 }
 
-function screenout() {
-    localStorage.setItem("screenout", "yes")
+async function screenout() {
+    localStorage.setItem("so", "yes")
     phase.value = "screenout"
+    await apiFetch(`/api/participant/${participantId.value}/status`, {
+        method: "POST",
+        body: JSON.stringify({ status: "screened_out" }),
+    });
+}
+
+async function reject() {
+    phase.value = "rejected"
+    await apiFetch(`/api/participant/${participantId.value}/status`, {
+        method: "POST",
+        body: JSON.stringify({ status: "rejected" }),
+    });
 }
 
 async function submitPostTaskData(payload: object) {
-    // console.log(payload)
     const res = await apiFetch("/api/post_task_data", {
         method: "POST",
         body: JSON.stringify({ participant_id: participantId.value, ...payload }),
@@ -87,5 +104,5 @@ async function fetchSubmittedAt() {
 }
 
 export function useParticipant() {
-    return { participantId, condition, phase, initParticipant, submitPreTaskData, submitPostTaskData, submitLog, fetchSubmittedAt, screenout };
+    return { participantId, condition, phase, initParticipant, submitPreTaskData, submitPostTaskData, submitLog, fetchSubmittedAt, screenout, reject };
 }

@@ -23,8 +23,8 @@
     })
 
     const preferenceLikertOptions = [
-        { label: 'Traditional search', val: 0 },
-        { label: 'AI-based search', val: 1 }
+        { label: 'Traditional search (e.g., Google, Bing)', val: 0 },
+        { label: 'AI-based search (e.g., AI Overviews, AI Search Mode)', val: 1 }
     ]
     const preferenceStatements = [
         "Find the boiling point of water at sea level",
@@ -104,7 +104,7 @@
         <h2 class="text-3xl font-bold! sticky top-0 bg-[#faf9f6] text-gray-600">Search Tool Preference</h2>
     </div>
     <div class="flex flex-col gap-3! w-full">
-        <p class="text-gray-600 text-xl">
+        <p class="text-gray-600 text-2xl">
             For the search tasks listed below, specify whether you would use traditional link-based search tools (e.g., Google, Bing) or AI/LLM search tools (e.g., AI Overviews, AI Search Mode, ChatGPT)
         </p>
 
@@ -113,7 +113,7 @@
 
         <div class="w-full border-b border-gray-600 my-3!" />
 
-        <p class="text-gray-600 text-xl">
+        <p class="text-gray-600 text-2xl">
             Next, help us understand your AI usage
         </p>
 
@@ -122,7 +122,7 @@
 
         <div class="w-full border-b border-gray-600 my-3!" />
 
-        <p class="text-gray-600 text-xl">
+        <p class="text-gray-600 text-2xl">
             Finally, indicate how much you agree with the following statement
         </p>
 

@@ -31,7 +31,7 @@
     <div class="sticky top-0 w-full flex justify-start items-center bg-[#faf9f6] py-6">
         <h2 class="text-3xl font-bold! sticky top-0 bg-[#faf9f6] text-gray-600">Topic Familiarity</h2>
     </div>
-    <p class="text-gray-600 text-xl w-full mb-3!">
+    <p class="text-gray-600 text-2xl w-full mb-3!">
         Your task for this study will be to search for information about <b class="font-bold!">nuclear energy</b>. How
         much do you agree with the following statement?
     </p>

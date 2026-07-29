@@ -25,11 +25,17 @@
             }
         }
 
+        if (step.value === 3) {
+            if (nfc.value[5] !== 2) {
+                setLocalStorage("fac", "1")
+            }
+        }
+
         step.value++;
     }
 
     async function begin() {
-        const _nfc = (nfc.value[0] + nfc.value[1] + (6 - nfc.value[2]) + (6 - nfc.value[3]) + nfc.value[4] + nfc.value[5]) / 6
+        const _nfc = (nfc.value[0] + nfc.value[1] + (6 - nfc.value[2]) + (6 - nfc.value[3]) + nfc.value[4] + nfc.value[6]) / 6
 
         await submitPreTaskData({
             knowledge_level: priorKnowledge.value,

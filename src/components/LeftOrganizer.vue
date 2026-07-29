@@ -18,7 +18,7 @@
 
     const emit = defineEmits(["updateRepresentation"]);
 
-    const { findNode, getNodes, viewport } = useVueFlow();
+    const { findNode, getNodes, viewport, zoomTo } = useVueFlow();
     const { submitLog, fetchSubmittedAt } = useParticipant();
 
     function parseSqliteTimestamp(ts) {
@@ -29,13 +29,22 @@
     const now = ref(Date.now());
     let tickInterval = null;
 
+    const MIN_ZOOM = 0.5;
+    const MAX_ZOOM = 2;
+
+    const zoomLevel = computed({
+        get: () => viewport.value.zoom,
+        set: (val) => zoomTo(val),
+    });
+
     const remainingMs = computed(() => {
         if (!created_at.value) return null;
         const elapsed = now.value - created_at.value.getTime();
         return Math.max(0, 10 * 60 * 1000 - elapsed);
     });
 
-    const canConclude = computed(() => remainingMs.value !== null && remainingMs.value <= 0);
+    const canSkipTime = ref(false)
+    const canConclude = computed(() => canSkipTime.value||(remainingMs.value !== null && remainingMs.value <= 0));
 
     const countdownLabel = computed(() => {
         if (remainingMs.value === null) return '';
@@ -58,6 +67,8 @@
         if (props.hideButtons) return;
 
         tickInterval = setInterval(() => { now.value = Date.now(); }, 1000);
+
+        canSkipTime.value = localStorage.getItem("skip") === "true"
 
         try {
             const _created_at = await fetchSubmittedAt();
@@ -337,7 +348,6 @@
             entry.data?.resultContent?.some(s => s.includes(text))
         );
         const source = match ? `${match.payload.query}-synthesis` : null;
-        console.log("source", source)
 
         nodes.value = [...nodes.value, {
             id,
@@ -471,8 +481,6 @@
 
 <template>
     <div class="w-full h-full relative p-2">
-        <b v-if="hideButtons" class="font-light! text-sm! text-red-500 absolute left-4 -bottom-4 z-50">You must create at least two
-            categories to continue</b>
         <VueFlow v-model:nodes="nodes" :nodes-connectable="true" :connect-on-click="false" :zoom-on-scroll="true"
             :zoom-on-pinch="false" :zoom-on-double-click="false" :pan-on-drag="true" :pan-on-scroll="false"
             :auto-pan-on-node-drag="false" :prevent-scrolling="true" :elevate-nodes-on-select="true"
@@ -565,8 +573,8 @@
                                         placeholder="Source of information"
                                         class="w-full text-sm border border-gray-300 rounded p-2 bg-white outline-none mt-0.5" />
                                 </div>
-                                <a v-if="item.url" :href="item.url" target="_blank"
-                                    class="text-[10px] text-blue-500 hover:underline truncate">{{ item.url }}</a>
+                                <!-- <a v-if="item.url" :href="item.url" target="_blank"
+                                    class="text-[10px] text-blue-500 hover:underline truncate">{{ item.url }}</a> -->
                             </div>
                         </div>
                     </div>
@@ -617,17 +625,17 @@
                                 placeholder="Source of information"
                                 class="w-full text-sm border border-gray-300 rounded p-2 bg-white outline-none mt-0.5" />
                         </div>
-                        <a v-if="data.url" :href="data.url" target="_blank"
+                        <!-- <a v-if="data.url" :href="data.url" target="_blank"
                             class="text-[10px] text-blue-500 hover:underline truncate">
                             {{ data.url }}
-                        </a>
+                        </a> -->
                     </div>
                 </div>
             </template>
 
             <Panel position="top-left">
                 <div class="flex gap-2 bg-white rounded-xl shadow-md border border-gray-300 px-3 py-2">
-                    <button @click="addCategory"
+                    <button @click="addCategory" id="tour-add-cat"
                         class="px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 border-indigo-500 text-white rounded-lg font-semibold! cursor-pointer transition-colors flex gap-x-1.5">
                         <svg width="12" class="fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                             <path
@@ -635,7 +643,7 @@
                         </svg>
                         Category
                     </button>
-                    <button @click="addEvidence"
+                    <button @click="addEvidence" id="tour-add-ev"
                         class="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 border-amber-400 rounded-lg font-semibold! cursor-pointer transition-colors flex gap-x-1.5">
                         <svg width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                             <path
@@ -660,6 +668,18 @@
                 </div>
             </Panel>
         </VueFlow>
+
+        <div class="absolute top-4 right-4 z-40 bg-white border border-gray-300 rounded-xl shadow-md p-2 flex flex-col items-center gap-2">
+            <!-- <span class="text-xs text-gray-500">{{ Math.round(zoomLevel * 100) }}%</span> -->
+            <input
+                type="range"
+                :min="MIN_ZOOM"
+                :max="MAX_ZOOM"
+                step="0.01"
+                v-model.number="zoomLevel"
+                class="zoom-slider"
+            />
+        </div>
 
         <div v-if="showTrash"
             class="absolute right-5 bottom-5 w-100 max-h-75 overflow-y-auto bg-white border border-gray-300 rounded-xl shadow-2xl z-50">
@@ -688,13 +708,13 @@
             </div>
         </div>
 
-        <Teleport to="body">
+        <!-- <Teleport to="body">
             <div v-if="!canConclude && countdownLabel && showTooltip"
                 class="fixed px-4 py-2 bg-white text-black border border-gray-300 w-18 text-center rounded-lg shadow-lg z-[9999] pointer-events-none"
                 :style="tooltipStyle">
                 {{ countdownLabel }}
             </div>
-        </Teleport>
+        </Teleport> -->
     </div>
 </template>
 
@@ -711,5 +731,14 @@
 .vue-flow__node-evidence.selected>div {
     outline: 2px solid #fbbf24;
     outline-offset: 2px;
+}
+
+.zoom-slider {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 6px;
+    height: 120px;
+    cursor: pointer;
+    accent-color: #6366f1;
 }
 </style>

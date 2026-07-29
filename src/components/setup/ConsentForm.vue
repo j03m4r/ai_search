@@ -40,21 +40,6 @@
         </div>
       </div>
 
-      <!-- Study Staff -->
-      <div>
-        <p class="text-xl font-semibold!">Study Staff (if applicable)</p>
-
-        <div class="border border-gray-300 rounded p-3 mt-2">
-          <div class="grid grid-cols-2 gap-2">
-            <p class="font-semibold!">Phone Number:</p>
-            <p class="italic text-gray-500">Not provided</p>
-
-            <p class="font-semibold!">Email Address:</p>
-            <p class="italic text-gray-500">Not provided</p>
-          </div>
-        </div>
-      </div>
-
       <!-- Supported By -->
       <p class="text-xl font-semibold!">
         <span class="font-bold!">Supported By:</span>

@@ -9,21 +9,18 @@
             <h2 class="text-3xl font-bold! sticky top-0 w-7xl bg-[#faf9f6] text-gray-600">Task Description</h2>
         </div>
         <div class="text-gray-600 flex flex-col gap-y-6 w-full">
-            <p class="text-xl">
-                We will now introduce you to the main task of this study. Your task is to search for and map out the competing considerations for a policy decision:
+            <p class="text-2xl">
+                Your task is to search for and map out the competing considerations for a policy decision:
                 <b class="font-bold!">whether to adopt nuclear energy.</b>
             </p>
 
-            <p class="text-xl">
+            <p class="text-2xl">
                 Major policy decisions such as this one involve weighing many competing considerations: for example,
                 scientific, economic, social, and political. Policymakers who understand a diverse set of
-                considerations tend to make better decisions than those who only see one side. Therefore,
-                in this study, <b class="font-bold!">we want to understand how the framing of information online influences the
-                factors that people consider</b>. The information map that you develop will be combined with
-                and compared against others to show us what the collective understanding of this topic looks like.
+                considerations tend to make better decisions than those who only see one side.
             </p>
 
-            <p class="text-xl">
+            <p class="text-2xl">
                 <b class="font-bold!">Use the provided search tool to explore what is at stake with the adoption of nuclear energy.</b>
                 As you search, you should build out your concept map. Organize this map around higher-level
                 dimensions (major categories of concern) and support each one with specific details you find.

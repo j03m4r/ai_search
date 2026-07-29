@@ -28,7 +28,7 @@
 
     <div class="flex flex-col items-center gap-4 w-full">
 
-        <div class="text-gray-600 text-xl gap-y-6 flex flex-col">
+        <div class="text-gray-600 text-2xl gap-y-6 flex flex-col">
             <p>
                 Now that you have searched and built your map, describe again what you think are the most important higher-level dimensions/considerations for adopting nuclear energy.
             </p>

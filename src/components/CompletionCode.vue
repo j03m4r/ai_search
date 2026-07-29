@@ -8,7 +8,7 @@
                     <h2 class="text-3xl font-bold! sticky top-0 bg-[#faf9f6] text-gray-600 w-full">Completion code</h2>
                 </div>
 
-                <p class="text-gray-600 text-xl w-full mb-3!">
+                <p class="text-gray-600 text-2xl w-full mb-3!">
                     Thank you for your time and participation! Here is your Prolific completion code:
                 </p>
         </div>

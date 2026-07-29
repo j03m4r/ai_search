@@ -8,6 +8,7 @@
         "Thinking is not my idea of fun.",
         "I would rather do something that requires little thought than something that is sure to challenge my thinking abilities.",
         "I really enjoy a task that involves coming up with new solutions to problems.",
+        "I don't like to be creative. This is an attention check; select 'Uncharacteristic'",
         "I would prefer a task that is intellectual, difficult, and important to one that is somewhat important but does not require much thought."
     ];
 
@@ -32,7 +33,7 @@
         <h2 class="text-3xl font-bold! sticky top-0 bg-[#faf9f6] text-gray-600">Need For Cognition Scale</h2>
     </div>
 
-    <p class="text-gray-600 text-xl w-full mb-3!">
+    <p class="text-gray-600 text-2xl w-full mb-3!">
         For each sentence below, please select how uncharacteristic or characteristic (5-point scale) this is for you personally
     </p>
 

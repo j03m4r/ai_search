@@ -33,7 +33,7 @@
             </div>
         </div>
         <div v-for="(statement, idx) in props.statements" class="flex w-full gap-x-4 justify-center h-full items-center">
-            <p class="font-semibold! text-wrap min-w-[350px] max-w-[350px] pl-4">
+            <p class="font-semibold! text-wrap min-w-[350px] max-w-[350px] pl-4 text-lg">
             {{ statement }}
             </p>
             <div class="flex w-full justify-between items-center h-full gap-x-4 py-2">

@@ -8,6 +8,7 @@
     import { useTour } from '@/composables/useTour';
     import CompletionCode from "./components/CompletionCode.vue";
     import ScreenOut from "./components/ScreenOut.vue";
+import FailedAttentionChecks from "./components/FailedAttentionChecks.vue";
 
     const { condition, phase, initParticipant } = useParticipant();
     const { startMainTaskTour } = useTour();
@@ -48,4 +49,7 @@
 
     <!-- PROLIFIC SCREENOUT CODE -->
     <ScreenOut v-else-if="phase === 'screenout'" />
+
+    <!-- ATTENTION CHECKS FAILED -->
+    <FailedAttentionChecks v-else-if="phase === 'rejected'" />
 </template>

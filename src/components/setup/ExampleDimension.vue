@@ -7,19 +7,19 @@
 
 <template>
     <div class="w-full flex justify-center">
-        <div class="bg-white border rounded-xl shadow-lg flex flex-col w-100" id="ex-cat"
+        <div class="bg-white border rounded-xl shadow-lg flex flex-col w-100" 
         :class="{ 'border-indigo-300': imp === 0, 'border-indigo-400': imp === 1, 'border-indigo-500': imp === 2, 'border-indigo-600': imp === 3, 'border-indigo-700': imp === 4 }">
 
         <div
             class="drag-handle flex items-center justify-between gap-2 px-4 py-3 border-b cursor-grab active:cursor-grabbing rounded-t-xl transition-colors bg-indigo-50"
             :class="{ 'border-b-indigo-300': imp === 0, 'border-b-indigo-400': imp === 1, 'border-b-indigo-500': imp === 2, 'border-b-indigo-600': imp === 3, 'border-b-indigo-700': imp === 4 }">
-            <div class="flex-1 flex items-center justify-left gap-2 min-w-0" id="renaming-cat">
+            <div class="flex-1 flex items-center justify-left gap-2 min-w-0" >
             <p class="no-drag flex-1 font-bold! bg-transparent border-none outline-none text-black">
                 Social consequences
             </p>
             </div>
 
-            <button title="Delete" @click="null" :disabled="true" id="tour-delete-category"
+            <button title="Delete" @click="null" :disabled="true" 
             class="group bg-transparent border p-2 rounded-lg border-indigo-300 flex leading-none transition-colors">
             <svg class="" width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                 <path
@@ -30,7 +30,6 @@
 
         <div
             class="flex items-center justify-between gap-2 px-4 py-2! border-b no-drag! z-40 transition-colors bg-indigo-50"
-            id="tour-importance"
             :class="{ 'border-b-indigo-300': imp === 0, 'border-b-indigo-400': imp === 1, 'border-b-indigo-500': imp === 2, 'border-b-indigo-600': imp === 3, 'border-b-indigo-700': imp === 4 }">
             <div class="w-full">
             <LikertScale @updateImportance="(event) => imp = event.importance" :importance="2" id="ex_ev_1"
@@ -38,7 +37,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col gap-2 p-2 min-h-24" id="evidence-pool" :class="{ 'min-h-fit': 2 }">
+        <div class="flex flex-col gap-2 p-2 min-h-24" :class="{ 'min-h-fit': 2 }">
             <div
             class="bg-amber-50 border border-amber-300 rounded-lg overflow-hidden">
             <div class="flex items-center justify-between gap-2 px-4 py-3">
@@ -59,7 +58,7 @@
                     Research shows that LLMs isolate people from their peers by providing a place of perceived comfort.
                 </p>
 
-                <button @click.stop="null" title="Remove from category" :disabled="true" id="tour-eject-evidence" 
+                <button @click.stop="null" title="Remove from category" :disabled="true" 
                 class="group bg-transparent border p-2 rounded-lg border-amber-300 cursor-not-allowed flex leading-none transition-colors">
                 <svg width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                     <path
@@ -67,7 +66,7 @@
                 </svg>
                 </button>
 
-                <button @click.stop="null" title="Delete" :disabled="true" id="tour-delete-evidence" 
+                <button @click.stop="null" title="Delete" :disabled="true" 
                 class="group bg-transparent border p-2 rounded-lg border-amber-300 cursor-not-allowed flex leading-none transition-colors">
                 <svg width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                     <path

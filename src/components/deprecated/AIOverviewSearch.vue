@@ -209,7 +209,6 @@ async function performSearch() {
     }
 
     const json = await resp.json();
-    console.log(json)
 
     const blocks =
       json.ai_overview?.text_blocks ||

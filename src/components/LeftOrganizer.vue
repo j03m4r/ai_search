@@ -46,14 +46,6 @@
     const canSkipTime = ref(false)
     const canConclude = computed(() => canSkipTime.value||(remainingMs.value !== null && remainingMs.value <= 0));
 
-    const countdownLabel = computed(() => {
-        if (remainingMs.value === null) return '';
-        const totalSeconds = Math.ceil(remainingMs.value / 1000);
-        const mins = Math.floor(totalSeconds / 60);
-        const secs = totalSeconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    });
-
     onMounted(async () => {
         // Fetch canvas state from localStorage
         if (props.hideButtons) return
@@ -136,6 +128,8 @@
     }
 
     function deleteCategory(id) {
+        if (id === TOUR_CATEGORY_ID) return;
+
         const node = nodes.value.find(n => n.id === id);
         if (!node) return;
 
@@ -156,6 +150,8 @@
     }
 
     function updateCategoryImportance(id, importance) {
+        if (id === TOUR_CATEGORY_ID) return;
+
         const node = nodes.value.find(n => n.id === id);
         if (!node) return;
         if (node.data.importance === importance) return;
@@ -187,6 +183,8 @@
 
     // Remove evidence from inside a category and eject it back to the canvas
     function ejectEvidence(catId, itemId) {
+        if (catId === TOUR_CATEGORY_ID) return;
+
         const catNode = findNode(catId);
         if (!catNode) return;
 
@@ -209,6 +207,8 @@
 
     // Delete evidence that's inside a category (not a standalone node)
     function deleteEvidenceInCategory(catId, itemId) {
+        if (catId === TOUR_CATEGORY_ID) return;
+
         const catNode = findNode(catId);
         if (!catNode) return;
         const item = catNode.data.items.find(i => i.id === itemId);
@@ -333,7 +333,7 @@
             id,
             type: 'evidence',
             position: { x: 160 + Math.random() * 200, y: 160 + Math.random() * 200 },
-            data: { text: payload.title || payload.link || 'New Link', url: payload.link, source: payload.link || 'User', body: '', expanded: false },
+            data: { text: payload.title || payload.link || 'New Link', url: payload.link, source: payload.link || 'User', body: payload.body, expanded: false },
             dragHandle: '.drag-handle',
             style: { width: '220px' },
         }];
@@ -345,9 +345,9 @@
         const id = crypto.randomUUID();
 
         const match = log.value.find(entry =>
-            entry.data?.resultContent?.some(s => s.includes(text))
+            entry.data?.resultContent?.some(s => s.includes(payload.text))
         );
-        const source = match ? `${match.payload.query}-synthesis` : null;
+        const source = match ? `${match.data.query}-synthesis` : null;
 
         nodes.value = [...nodes.value, {
             id,
@@ -358,69 +358,6 @@
             style: { width: '220px' },
         }];
         addLog('evidence-created-from-text', { id, ...payload });
-    }
-
-    //Duplicate a piece of evidence.
-    function duplicateEvidence(sourceId) {
-        // tries to find uncategorized node
-        const node = nodes.value.find(n => n.id === sourceId && n.type === 'evidence');
-
-        if (node) {
-            const newId = crypto.randomUUID();
-
-            nodes.value = [
-                ...nodes.value,
-                {
-                    id: newId,
-                    type: 'evidence',
-                    position: {
-                        x: node.position.x + 40,
-                        y: node.position.y + 40
-                    },
-                    data: {
-                        ...node.data,
-                        expanded: false,
-                        source: sourceId
-                    },
-                    dragHandle: '.drag-handle',
-                    style: { width: '220px' }
-                }
-            ];
-
-            addLog('evidence-duplicated', { sourceId, newId });
-            return;
-        }
-
-        // then try to find node in a category
-        const catNode = nodes.value.find(n => n.type === 'category' && n.data.items.some(i => i.id === sourceId));
-        if (!catNode) return;
-
-        const item = catNode.data.items.find(i => i.id === sourceId);
-        if (!item) return;
-
-        const newId = crypto.randomUUID();
-
-        nodes.value = [
-            ...nodes.value,
-            {
-                id: newId,
-                type: 'evidence',
-                position: {
-                    x: catNode.position.x + 340,
-                    y: catNode.position.y + 40
-                },
-                data: {
-                    ...item,
-                    id: newId,
-                    expanded: false,
-                    source: sourceId
-                },
-                dragHandle: '.drag-handle',
-                style: { width: '220px' }
-            }
-        ];
-
-        addLog('evidence-duplicated-from-category', { sourceId, newId, categoryId: catNode.id });
     }
 
     function confirmFinish() {
@@ -476,6 +413,43 @@
         };
     });
 
+    const TOUR_CATEGORY_ID = 'ex-cat';
+    const TOUR_EVIDENCE1_ID = 'ex-ev1';
+    const TOUR_EVIDENCE2_ID = 'ex-ev2';
+
+    function spawnTourExample() {
+        nodes.value = [
+            ...nodes.value,
+            {
+                id: TOUR_CATEGORY_ID,
+                type: 'category',
+                position: { x: 80, y: 80 },
+                data: {
+                    label: 'Example Category',
+                    importance: 2,
+                    items: [
+                        { id: TOUR_EVIDENCE1_ID, text: 'Example evidence 1', body: 'Details go here.', source: 'Tutorial' },
+                        { id: TOUR_EVIDENCE2_ID, text: 'Example evidence 2', body: 'Details go here.', source: 'Tutorial' }
+                    ],
+                },
+                dragHandle: '.drag-handle',
+                style: { width: '300px' },
+            },
+        ];
+    }
+
+    function despawnTourExample() {
+        nodes.value = nodes.value.filter(
+            (n) => n.id !== TOUR_CATEGORY_ID && n.id !== TOUR_EVIDENCE1_ID && n.id !== TOUR_EVIDENCE2_ID
+        );
+    }
+
+    import { useTour } from '@/composables/useTour.js';
+    const { startRepresentationTour } = useTour();
+    function tutorial() {
+        startRepresentationTour(spawnTourExample, despawnTourExample, () => {});
+    }
+
     defineExpose({ addEvidenceFromLink, addEvidenceFromText, addLog });
 </script>
 
@@ -483,25 +457,27 @@
     <div class="w-full h-full relative p-2">
         <VueFlow v-model:nodes="nodes" :nodes-connectable="true" :connect-on-click="false" :zoom-on-scroll="true"
             :zoom-on-pinch="false" :zoom-on-double-click="false" :pan-on-drag="true" :pan-on-scroll="false"
-            :auto-pan-on-node-drag="false" :prevent-scrolling="true" :elevate-nodes-on-select="true"
+            :auto-pan-on-node-drag="false" :prevent-scrolling="true" :elevate-nodes-on-select="true" :delete-key-code="null"
             no-drag-class-name="no-drag" class="bg-[#faf9f6] border border-gray-300 rounded-xl shadow-xl"
             @node-drag-stop="onNodeDragStop" @node-drag="onNodeDrag">
             <Background variant="dots" :gap="24" :size="1.2" pattern-color="#000"></Background>
 
             <template #node-category="{ id, data }">
                 <div class="bg-white border rounded-xl shadow-lg flex flex-col w-75"
+                    :id="id"
                     :class="{ 'border-indigo-300': data.importance === 0, 'border-indigo-400': data.importance === 1, 'border-indigo-500': data.importance === 2, 'border-indigo-600': data.importance === 3, 'border-indigo-700': data.importance === 4 }">
 
                     <div class="drag-handle flex items-center justify-between gap-2 px-4 py-3 border-b cursor-grab active:cursor-grabbing rounded-t-xl transition-colors bg-indigo-50"
                         :class="{ 'border-b-indigo-300': data.importance === 0, 'border-b-indigo-400': data.importance === 1, 'border-b-indigo-500': data.importance === 2, 'border-b-indigo-600': data.importance === 3, 'border-b-indigo-700': data.importance === 4 }">
-                        <div class="flex-1 flex items-center justify-left gap-2 min-w-0">
-                            <input :value="data.label" @input="data.label = $event.target.value"
+                        <div class="flex-1 flex items-center justify-left gap-2 min-w-0" :id="id==='ex-cat'?'tour-rename-cat':'undefined'">
+                            <input :value="data.label" @input="data.label = $event.target.value" :disabled="id === TOUR_CATEGORY_ID"
                                 @change="addLog('category-renamed', { id, label: data.label })"
                                 class="no-drag flex-1 font-bold! bg-transparent border-none outline-none text-black"
                                 placeholder="Category name..." />
                         </div>
 
                         <button title="Delete" @click="deleteCategory(id)"
+                            :id="id === 'ex-cat' ? 'tour-delete-cat' : 'undefined'"
                             class="group bg-transparent border p-2 rounded-lg border-indigo-300 hover:bg-indigo-100 cursor-pointer flex leading-none transition-colors">
                             <svg class="" width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                                 <path
@@ -510,13 +486,13 @@
                         </button>
                     </div>
 
-                    <div class="cursor-pointer flex items-center justify-between gap-2 px-4 py-2! border-b no-drag! z-40 transition-colors bg-indigo-50"
+                    <div class="cursor-pointer flex items-center justify-between gap-2 px-4 py-2! border-b no-drag! z-40 transition-colors bg-indigo-50" :id="id==='ex-cat'?'tour-importance-cat':'undefined'"
                         :class="{ 'border-b-indigo-300': data.importance === 0, 'border-b-indigo-400': data.importance === 1, 'border-b-indigo-500': data.importance === 2, 'border-b-indigo-600': data.importance === 3, 'border-b-indigo-700': data.importance === 4 }">
                         <LikertScale @updateImportance="updateCategoryImportance" :importance="data.importance" :id="id"
                             :name="'Importance'" />
                     </div>
 
-                    <div class="flex flex-col gap-2 p-2 min-h-24" :class="{ 'min-h-fit': data.items.length }">
+                    <div class="flex flex-col gap-2 p-2 min-h-24" :id="id==='ex-cat'?'tour-evidence-pool':'undefined'" :class="{ 'min-h-fit': data.items.length }">
                         <div v-if="data.items.length === 0"
                             class="text-sm h-20 text-gray-300 text-center justify-center items-center flex py-3 border-2 border-dashed border-gray-300 rounded-lg select-none">
                             drop evidence here
@@ -525,7 +501,7 @@
                         <div v-for="item in data.items" :key="item.id"
                             class="bg-amber-50 border border-amber-300 rounded-lg overflow-hidden">
                             <div class="flex items-center justify-between gap-2 px-4 py-3">
-                                <button @click.stop="item.expanded = !item.expanded"
+                                <button @click.stop="item.expanded = !item.expanded" :disabled="item.id === TOUR_EVIDENCE1_ID || item.id === TOUR_EVIDENCE2_ID"
                                     class="shrink-0 w-4 h-4 bg-transparent border-0 cursor-pointer p-0 transition-colors flex items-center justify-center">
                                     <svg v-if="item.expanded" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"
                                         width="18" fill="currentColor">
@@ -538,17 +514,17 @@
                                             d="M438.6 297.4C451.1 309.9 451.1 330.2 438.6 342.7L278.6 502.7C266.1 515.2 245.8 515.2 233.3 502.7C220.8 490.2 220.8 469.9 233.3 457.4L370.7 320L233.4 182.6C220.9 170.1 220.9 149.8 233.4 137.3C245.9 124.8 266.2 124.8 278.7 137.3L438.7 297.3z" />
                                     </svg>
                                 </button>
-                                <input :value="item.text" @input="item.text = $event.target.value"
-                                    @change="addLog('evidence-renamed', { id: item.id, text: item.text })"
+                                <input :value="item.text" @input="item.text = $event.target.value" :disabled="item.id === TOUR_EVIDENCE1_ID || item.id === TOUR_EVIDENCE2_ID"
+                                    @change="addLog('evidence-renamed', { id: item.id, text: item.text })" :id="item.id === TOUR_EVIDENCE1_ID ? 'tour-rename-ev' : 'undefined'"
                                     class="flex-1 min-w-0 font-semibold! bg-transparent border-none outline-none text-black" />
-                                <button @click.stop="ejectEvidence(id, item.id)" title="Remove from category"
+                                <button @click.stop="ejectEvidence(id, item.id)" title="Remove from category" :id="item.id==='ex-ev1'?'tour-eject-evidence':'undefined'"
                                     class="group bg-transparent border p-2 rounded-lg border-amber-300 hover:bg-amber-100 cursor-pointer flex leading-none transition-colors">
                                     <svg width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                                         <path
                                             d="M160 512C142.3 512 128 526.3 128 544C128 561.7 142.3 576 160 576L256 576C309 576 352 533 352 480L352 173.3L425.4 246.7C437.9 259.2 458.2 259.2 470.7 246.7C483.2 234.2 483.2 213.9 470.7 201.4L342.7 73.4C330.2 60.9 309.9 60.9 297.4 73.4L169.4 201.4C156.9 213.9 156.9 234.2 169.4 246.7C181.9 259.2 202.2 259.2 214.7 246.7L288 173.3L288 480C288 497.7 273.7 512 256 512L160 512z" />
                                     </svg>
                                 </button>
-                                <button @click.stop="deleteEvidenceInCategory(id, item.id)" title="Delete"
+                                <button @click.stop="deleteEvidenceInCategory(id, item.id)" title="Delete" :id="item.id==='ex-ev1'?'tour-delete-evidence':'undefined'"
                                     class="group bg-transparent border p-2 rounded-lg border-amber-300 hover:bg-amber-100 cursor-pointer flex leading-none transition-colors">
                                     <svg width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                                         <path
@@ -659,9 +635,13 @@
                         </svg>
                         Toggle Trash
                     </button>
+                    <button @click="tutorial"
+                        class="px-3 py-1.5 hover:bg-gray-100 border border-gray-300 rounded-lg cursor-pointer transition-colors flex gap-x-1.5">
+                        Tutorial
+                    </button>
                     <button id="conclude-task-btn" :hidden="hideButtons" @click="confirmFinish" :disabled="!canConclude"
                         ref="concludeBtnRef"
-                        class="mt-4 px-4 py-2 bg-red-500 text-white group relative rounded-lg shadow hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="px-3 py-1.5 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         @mouseenter="showTooltip = true" @mouseleave="showTooltip = false">
                         Conclude Task
                     </button>

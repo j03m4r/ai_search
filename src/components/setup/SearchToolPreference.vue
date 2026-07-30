@@ -9,7 +9,7 @@
             investigate: string | null;
         };
         frequency: number | null;
-        trust: number | null;
+        skepticism: number | null;
     }
 
     const searchToolData = ref<SearchToolData>({
@@ -19,7 +19,7 @@
             investigate: null
         },
         frequency: null,
-        trust: null
+        skepticism: null
     })
 
     const preferenceLikertOptions = [
@@ -46,25 +46,23 @@
     ]
     const frequencyResponses = ref(Array(frequencyStatements.length).fill(null));
 
-    const trustLikertOptions = [
-        { label: 'Strongly disagree', val: -3 },
-        { label: 'Disagree', val: -2 },
-        { label: 'Neither agree nor disagree', val: 0 },
-        { label: 'Agree', val: 2 },
-        { label: 'Strongly agree', val: 3 },
+    const skepticismLikertOptions = [
+        { label: 'More excited than concerned', val: -1 },
+        { label: 'Equally excited and concerned', val: 0 },
+        { label: 'More concerned than excited', val: 1 },
     ]
-    const trustStatements = [
-        "I trust AI/LLM tools (e.g., AI Overviews, AI Search Mode, ChatGPT) to provide accurate information",
+    const skepticismStatements = [
+        "The increased use of artificial intelligence (AI) in daily life makes me feel ...",
     ]
-    const trustResponses = ref(Array(trustStatements.length).fill(null));
+    const skepticismResponses = ref(Array(skepticismStatements.length).fill(null));
 
-    type TopLevelKey = "frequency" | "trust"
+    type TopLevelKey = "frequency" | "skepticism"
 
     const setLikertVal = (key: TopLevelKey, value: number) => {
         if (key === "frequency") {
             frequencyResponses.value = [value];
         } else {
-            trustResponses.value = [value];
+            skepticismResponses.value = [value];
         }
         searchToolData.value[key] = value;
     }
@@ -84,8 +82,8 @@
         const p2 = searchToolData.value.preferences.learn !== null
         const p3 = searchToolData.value.preferences.investigate !== null
         const freq = searchToolData.value.frequency !== null
-        const trust = searchToolData.value.trust !== null
-        return p1 && p2 && p3 && freq && trust;
+        const skepticism = searchToolData.value.skepticism !== null
+        return p1 && p2 && p3 && freq && skepticism;
     });
     
     const emit = defineEmits<{
@@ -123,11 +121,11 @@
         <div class="w-full border-b border-gray-600 my-3!" />
 
         <p class="text-gray-600 text-2xl">
-            Finally, indicate how much you agree with the following statement
+            Finally, indicate your response to the following statement
         </p>
 
-        <SurveyLikert :likertOptions="trustLikertOptions" :statements="trustStatements" :ratings="trustResponses"
-        @update:ratings="(newRatings: number[]) => setLikertVal('trust', newRatings[0])" />
+        <SurveyLikert :likertOptions="skepticismLikertOptions" :statements="skepticismStatements" :ratings="skepticismResponses"
+        @update:ratings="(newRatings: number[]) => setLikertVal('skepticism', newRatings[0])" />
     </div>
 
     <div class="mb-40!"></div>

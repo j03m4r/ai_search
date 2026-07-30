@@ -9,10 +9,11 @@
     import InitialRepresentation from "./InitialRepresentation.vue";
     import type { category } from "./InitialRepresentation.vue";
     import { useParticipant } from "@/composables/useParticipant";
+    import Overview from "./Overview.vue";
 
     const { submitPreTaskData, screenout } = useParticipant();
 
-    const step = ref(0);
+    const step = ref(-1);
     const priorKnowledge = ref(-1);
     const searchToolData = ref < SearchToolData | null > (null);
     const nfc = ref(Array(6).fill(null));
@@ -76,7 +77,8 @@
 <template>
     <div class="w-full h-full flex justify-center items-start">
         <div class="w-7xl flex flex-col items-center justify-center">
-            <ConsentForm v-if="step === 0" @next-step="nextStep" />
+            <ConsentForm v-if="step === -1" @next-step="nextStep" />
+            <Overview v-else-if="step === 0" @next-step="nextStep" />
             <PriorKnowledge v-else-if="step === 1" @update-prior-knowledge="(pk: number) => { priorKnowledge = pk, setLocalStorage('prior_knowledge', pk.toString()) }" @next-step="nextStep" />
             <SearchToolPreference v-else-if="step === 2" @update-search-tool-data="(data) => { searchToolData = data, setLocalStorage('search_tool_data', JSON.stringify(data)) }" @next-step="nextStep" />
             <NFC v-else-if="step === 3" @next-step="nextStep" @updateNFC="(nfcData) => { nfc = nfcData, setLocalStorage('nfc', JSON.stringify(nfcData)) }" />

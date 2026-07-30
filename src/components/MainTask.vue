@@ -71,7 +71,7 @@
     function onResize(e) {
         if (!isResizing.value) return;
         const newWidth = e.clientX;
-        leftWidth.value = Math.min(Math.max(newWidth, 600), window.innerWidth * 0.65);
+        leftWidth.value = Math.min(Math.max(newWidth, 700), window.innerWidth * 0.65);
     }
 
     function stopResize() {
@@ -158,6 +158,13 @@
                 <p class="text-sm text-gray-700 wrap-break-word p-3 border border-gray-400 rounded-lg">
                     {{ pendingLinkEvidence?.title || pendingLinkEvidence?.url }}
                 </p>
+
+                <div>
+                    <label class="text-xs uppercase tracking-wide">Details</label>
+                    <textarea :value="pendingLinkEvidence.body" @input="pendingLinkEvidence.body = $event.target.value"
+                        placeholder="Add information here... Details, reasoning for inclusion, etc."
+                        class="w-full min-h-20 resize-y text-sm border border-gray-300 rounded p-2 bg-white outline-none mt-0.5"></textarea>
+                </div>
 
                 <div class="flex w-full justify-between gap-3!">
                     <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 cursor-pointer" @click="cancelLinkEvidence">

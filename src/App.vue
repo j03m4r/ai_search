@@ -8,7 +8,7 @@
     import { useTour } from '@/composables/useTour';
     import CompletionCode from "./components/CompletionCode.vue";
     import ScreenOut from "./components/ScreenOut.vue";
-import FailedAttentionChecks from "./components/FailedAttentionChecks.vue";
+    import FailedAttentionChecks from "./components/FailedAttentionChecks.vue";
 
     const { condition, phase, initParticipant } = useParticipant();
     const { startMainTaskTour } = useTour();

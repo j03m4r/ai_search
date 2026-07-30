@@ -6,13 +6,13 @@
     const { reject } = useParticipant()
 
     const tlx_questions = [
-        "How much mental and perceptual activity was required (e.g. thinking, deciding, calculating, remembering, looking, searching, etc)? Was the task easy or demanding, simple or complex, exacting or forgiving?",
-        "How much physical activity was required (e.g. pushing, pulling, turning, controlling, activating, etc)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?",
-        "How much time pressure did you feel due to the rate of pace at which the tasks or task elements occurred? Was the pace slow and leisurely or rapid and frantic?",
-        "How successful do you think you were in accomplishing the goals of the task set by the experimenter (or yourself)? How satisfied were you with your performance in accomplishing these goals?",
-        "How hard did you have to work (mentally and physically) to accomplish your level of performance?",
-        "How insecure, discouraged, irritated, stressed and annoyed versus secure, gratified, content, relaxed and complacent did you feel during the task?",
-        "How do you think people will perceive your performance? This is an attention check; select 80 on the slider."
+        "How mentally demanding was the task?",
+        "How hurried or rushed was the pace of the task?",
+        "How hurried or rushed was the pace of the task?",
+        "How successful were you in accomplishing what you were asked to do?",
+        "How hard did you have to work to accomplish your level of performance?",
+        "How do you think people will perceive your performance? This is an attention check; select 80 on the slider.",
+        "How insecure, discouraged, irritated, stressed and annoyed were you?",
     ];
 
     const emit = defineEmits<{
@@ -26,24 +26,23 @@
         temporal: number | null;
         performance: number | null;
         effort: number | null;
-        frustration: number | null;
         attention: number | null;
+        frustration: number | null;
     }>({
         mental: null,
         // physical: null,
         temporal: null,
         performance: null,
         effort: null,
+        attention: null,
         frustration: null,
-        attention: null
     });
 
     const allAnswered = computed(() => Object.values(tlx.value).every(v => v !== null));
 
     const rawTlxScore = () => {
         if (!allAnswered.value) return 0;
-        let values = Object.values(tlx.value) as number[];
-        values = values.slice(0, values.length-1)
+        let values = Object.entries(tlx.value).filter(([key, value]) => key!=="attention").map(([key, value]) => value) as number[]
         return values.reduce((sum, v) => sum + v, 0) / values.length;
     };
 
@@ -75,8 +74,8 @@
         <TLXScale
             v-model="tlx.mental"
             :statement="tlx_questions[0]"
-            left-label="Low"
-            right-label="High"
+            left-label="Very Low"
+            right-label="Very High"
         />
         <!-- <TLXScale
             v-model="tlx.physical"
@@ -87,32 +86,32 @@
         <TLXScale
             v-model="tlx.temporal"
             :statement="tlx_questions[2]"
-            left-label="Low"
-            right-label="High"
+            left-label="Very Low"
+            right-label="Very High"
         />
         <TLXScale
             v-model="tlx.performance"
             :statement="tlx_questions[3]"
-            left-label="Good"
-            right-label="Poor"
+            left-label="Perfect"
+            right-label="Failure"
         />
         <TLXScale
             v-model="tlx.effort"
             :statement="tlx_questions[4]"
-            left-label="Low"
-            right-label="High"
-        />
-        <TLXScale
-            v-model="tlx.frustration"
-            :statement="tlx_questions[5]"
-            left-label="Low"
-            right-label="High"
+            left-label="Very Low"
+            right-label="Very High"
         />
         <TLXScale
             v-model="tlx.attention"
+            :statement="tlx_questions[5]"
+            left-label="Very Low"
+            right-label="Very High"
+        />
+        <TLXScale
+            v-model="tlx.frustration"
             :statement="tlx_questions[6]"
-            left-label="Good"
-            right-label="Poor"
+            left-label="Very Low"
+            right-label="Very High"
         />
     </div>
 

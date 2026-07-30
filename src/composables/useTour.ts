@@ -10,25 +10,6 @@ export function useTour() {
 
         let completed = false;
 
-        const evidenceStepPopover = `
-            <div style="max-width: 360px;">
-                <p style="margin-bottom: 10px;">
-                In our interface, when you select a piece of text like this:
-                </p>
-                <div style="position: relative; padding: 8px 0;">
-                    <span style="background-color: #B4D5FE; padding: 4px; text-align: center;">
-                        electric cars produce zero tailpipe emissions
-                    </span>
-                    <div style="width: 100%; display: flex; justify-content: center;">
-                        <div class="demo-enter-chip">Press Enter</div>
-                    </div>
-                </div>
-                <p style="margin-top: 12px;">
-                A tooltip will appear near your selection. Press Enter to save it as evidence on your canvas.
-                </p>
-            </div>
-            `;
-
         const tourDriver = driver({
             showProgress: true,
             allowClose: false,
@@ -39,12 +20,6 @@ export function useTour() {
             onDestroyed: () => onComplete(!completed),
             steps: [
                 { element: '#search-panel', popover: { title: searchTitle, description: searchDesc } },
-                {
-                    popover: {
-                        title: 'You can create evidence from highlighted text',
-                        description: evidenceStepPopover,
-                    },
-                },
                 { element: '.vue-flow', popover: { title: 'Your canvas', description: 'This is where you will continue to iterate on your concept map as you search.' } },
                 { element: '#conclude-task-btn', popover: { title: 'Finishing up', description: 'Once your representation feels complete, click here. This becomes available after sufficient time has passed.' } },
             ],
@@ -53,13 +28,30 @@ export function useTour() {
         tourDriver.drive();
     }
 
-    function startRepresentationTour(onComplete: () => void) {
+    function startHighlightTour(onComplete: () => void) {
         const tourDriver = driver({
             showProgress: true,
             allowClose: false,
             onDestroyed: () => onComplete(),
             steps: [
-                { element: '.vue-flow', popover: { title: 'Your canvas', description: 'This is where you will create your intitial concept map.' } },
+                { element: '#tour-highlight', popover: { title: 'Creating evidence from text', description: 'You can highlight text in search results and press Enter to create evidence from it' } },
+            ],
+        });
+
+        tourDriver.drive();
+    }
+
+    function startRepresentationTour(
+        onSpawn: () => void,
+        onDespawn: () => void,
+        onComplete: () => void
+    ) {
+        onSpawn();
+        const tourDriver = driver({
+            onDestroyed: () => { onDespawn(); onComplete(); },
+            allowClose: false,
+            steps: [
+                { element: '.vue-flow', popover: { title: 'Your canvas', description: 'This is where you develop and organize your concept map.' } },
                 {
                     element: '#tour-add-cat',
                     popover: { title: 'Adding a category', description: 'This button adds a fresh category to the canvas.' },
@@ -70,23 +62,27 @@ export function useTour() {
                 },
                 {
                     element: '#ex-cat',
-                    popover: { title: 'Using categories', description: 'Revisiting the example category. Let&apos;s walk through the different ways you can interact with categories and evidence.' },
+                    popover: { title: 'Using categories', description: 'Here&apos;s an example category. Let&apos;s walk through the different ways you can interact with categories and evidence.' },
                 },
                 {
-                    element: '#renaming-cat',
+                    element: '#tour-rename-cat',
                     popover: { title: 'Renaming categories', description: 'You can edit the text of categories here' },
                 },
                 {
-                    element: '#tour-delete-category',
+                    element: '#tour-delete-cat',
                     popover: { title: 'Deleting a category', description: 'This button removes a category from the canvas (recoverable from trash) — any evidence inside moves back onto the canvas rather than being deleted with it.' },
                 },
                 {
-                    element: '#tour-importance',
+                    element: '#tour-importance-cat',
                     popover: { title: 'Updating category importance', description: 'Using this slider you can adjust the importance you believe a category holds.' },
                 },
                 {
-                    element: '#evidence-pool',
+                    element: '#tour-evidence-pool',
                     popover: { title: 'Adding evidence to categories', description: 'This is where you will drag and drop evidence into categories.' },
+                },
+                {
+                    element: '#tour-rename-ev',
+                    popover: { title: 'Changing evidence text', description: 'Just like categories, you can edit the text here' },
                 },
                 {
                     element: '#tour-eject-evidence',
@@ -101,5 +97,5 @@ export function useTour() {
         tourDriver.drive();
     }
 
-    return { startMainTaskTour, startRepresentationTour };
+    return { startMainTaskTour, startHighlightTour, startRepresentationTour };
 }

@@ -17,15 +17,14 @@
                     <template v-if="msg._blocks">
 
                         <div v-for="(block, bi) in msg._blocks" :key="bi">
-
                             <!-- HEADING -->
-                            <h4 v-if="block.type === 'heading'" class="font-semibold! py-2 text-lg">
+                            <h4 v-if="block.type === 'heading'" :id="i===1&&bi===0?'tour-highlight':undefined" class="font-semibold! py-2 text-lg" :class="i===1&&bi===0&&!finishedHighlightTutorial ? 'tour-selection-mark' : ''">
                                 {{ block.snippet }}
                             </h4>
 
                             <!-- PARAGRAPH -->
-                            <p v-else-if="block.type === 'paragraph'" class="flex flex-wrap items-start gap-1">
-                                <span>{{ block.snippet }}</span>
+                            <p v-else-if="block.type === 'paragraph'" :id="i===1&&bi===0?'tour-highlight':undefined" class="flex flex-wrap items-start gap-1">
+                                <span :class="i===1&&bi===0&&!finishedHighlightTutorial ? 'tour-selection-mark' : ''">{{ block.snippet }}</span>
 
                                 <!-- Paragraph citation bubble -->
                                 <span v-if="block.refIndexes && block.refIndexes.length" class="relative inline-flex">
@@ -92,52 +91,54 @@
                             <div v-else-if="block.type === 'list'">
                                 <p v-if="block.snippet">{{ block.snippet }}</p>
 
-                                <ul class="list-disc list-inside flex flex-col gap-1 px-2">
-                                    <li v-for="(item, li) in block.items" :key="li"
-                                        class="flex flex-wrap items-start gap-1">
-                                        <!-- Item text -->
-                                        <span class="whitespace-pre-line">
-                                            {{ item.text }}
-                                        </span>
-
-                                        <!-- Item citation bubble -->
-                                        <span v-if="item.refIndexes && item.refIndexes.length"
-                                            class="relative inline-flex">
-                                            <span @click.stop="updateAlignment($event, `${i}-${bi}-item-${li}`)"
-                                                class="inline-flex items-center gap-1 bg-gray-200 hover:bg-gray-300 cursor-pointer text-xs rounded-full py-0.5 px-2 ml-1 select-none">
-                                                {{ msg.sources[item.refIndexes[0]]?.source ||
-                                                msg.sources[item.refIndexes[0]]?.title }}
-                                                <span v-if="item.refIndexes.length > 1" class="text-gray-500">
-                                                    +{{ item.refIndexes.length - 1 }}
-                                                </span>
+                                <ul class="list-disc pl-5 flex flex-col gap-1">
+                                    <li v-for="(item, li) in block.items" :key="li">
+                                        <div class="flex flex-wrap items-start gap-1">
+                                            <span v-if="item.text.match(/^([A-Za-z][A-Za-z'\-]*(?:\s+[A-Za-z][A-Za-z'\-]*){0,3}:)\s*/)">
+                                                <span><b class="font-bold!">{{ item.text.match(/^([A-Za-z][A-Za-z'\-]*(?:\s+[A-Za-z][A-Za-z'\-]*){0,3}:)\s*/)[1] }}</b> {{ item.text.slice(item.text.match(/^([A-Za-z][A-Za-z'\-]*(?:\s+[A-Za-z][A-Za-z'\-]*){0,3}:)\s*/)[0].length) }}</span>
                                             </span>
+                                            <span v-else class="whitespace-pre-line">
+                                                {{ item.text }}
+                                            </span>
+                                            <!-- Item citation bubble -->
+                                            <span v-if="item.refIndexes && item.refIndexes.length"
+                                                class="relative inline-flex">
+                                                <span @click.stop="updateAlignment($event, `${i}-${bi}-item-${li}`)"
+                                                    class="inline-flex items-center gap-1 bg-gray-200 hover:bg-gray-300 cursor-pointer text-xs rounded-full py-0.5 px-2 ml-1 select-none">
+                                                    {{ msg.sources[item.refIndexes[0]]?.source ||
+                                                    msg.sources[item.refIndexes[0]]?.title }}
+                                                    <span v-if="item.refIndexes.length > 1" class="text-gray-500">
+                                                        +{{ item.refIndexes.length - 1 }}
+                                                    </span>
+                                                </span>
 
-                                            <!-- Item popup -->
-                                            <div v-if="activePopup === `${i}-${bi}-item-${li}`"
-                                                class="absolute top-full mt-1 w-100 bg-white border border-gray-300 rounded-xl shadow-xl z-50 overflow-hidden"
-                                                :class="popupAlignments[`${i}-${bi}-item-${li}`] === 'right' ? 'right-0' : 'left-0'">
-                                                <div
-                                                    class="px-3 py-2 border-b border-gray-300 flex items-center justify-between">
-                                                    <span
-                                                        class="text-xs font-semibold! text-gray-500 uppercase tracking-wide">Sources</span>
-                                                    <button @click.stop="closePopup"
-                                                        class="text-gray-300 hover:text-gray-500 text-sm">✕</button>
+                                                <!-- Item popup -->
+                                                <div v-if="activePopup === `${i}-${bi}-item-${li}`"
+                                                    class="absolute top-full mt-1 w-100 bg-white border border-gray-300 rounded-xl shadow-xl z-50 overflow-hidden"
+                                                    :class="popupAlignments[`${i}-${bi}-item-${li}`] === 'right' ? 'right-0' : 'left-0'">
+                                                    <div
+                                                        class="px-3 py-2 border-b border-gray-300 flex items-center justify-between">
+                                                        <span
+                                                            class="text-xs font-semibold! text-gray-500 uppercase tracking-wide">Sources</span>
+                                                        <button @click.stop="closePopup"
+                                                            class="text-gray-300 hover:text-gray-500 text-sm">✕</button>
+                                                    </div>
+
+                                                    <ul class="flex flex-col divide-y divide-gray-300">
+                                                        <li v-for="ri in item.refIndexes" :key="ri"
+                                                            class="px-3 py-2 hover:bg-gray-50 cursor-pointer"
+                                                            @click.stop="emitSourceClick(msg.sources[ri]); closePopup()">
+                                                            <div class="text-sm font-medium text-gray-700 truncate">
+                                                                {{ msg.sources[ri]?.title }}
+                                                            </div>
+                                                            <div class="text-xs text-blue-600 underline truncate">
+                                                                {{ msg.sources[ri]?.link }}
+                                                            </div>
+                                                        </li>
+                                                    </ul>
                                                 </div>
-
-                                                <ul class="flex flex-col divide-y divide-gray-300">
-                                                    <li v-for="ri in item.refIndexes" :key="ri"
-                                                        class="px-3 py-2 hover:bg-gray-50 cursor-pointer"
-                                                        @click.stop="emitSourceClick(msg.sources[ri]); closePopup()">
-                                                        <div class="text-sm font-medium text-gray-700 truncate">
-                                                            {{ msg.sources[ri]?.title }}
-                                                        </div>
-                                                        <div class="text-xs text-blue-600 underline truncate">
-                                                            {{ msg.sources[ri]?.link }}
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </span>
+                                            </span>
+                                         </div>
                                     </li>
                                 </ul>
                             </div>
@@ -188,11 +189,12 @@
 
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, onMounted, onUnmounted, nextTick, watch } from "vue";
 
 const messagesEnd = ref(null);
 
 async function scrollToBottom() {
+    if (messages.value.length === 2) return
     await nextTick();
     messagesEnd.value?.scrollIntoView({ behavior: "smooth" });
 }
@@ -205,12 +207,10 @@ const continuationToken = ref(null);
 
 const activePopup = ref(null);
 const popupAlignments = ref({});
+const finishedHighlightTutorial = ref(false);
 
 const emit = defineEmits(["link-clicked", "log"]);
 
-/* -------------------------------------------------------
-   Popup helpers
-------------------------------------------------------- */
 function togglePopup(key) {
     activePopup.value = activePopup.value === key ? null : key;
     emit("log", {
@@ -233,13 +233,24 @@ function updateAlignment(event, key) {
 function onClickOutside() {
     activePopup.value = null;
 }
-
-onMounted(() => document.addEventListener("click", onClickOutside));
+import { useTour } from "@/composables/useTour";
+const { startHighlightTour } = useTour()
+watch(() => messages.value.length, (newLength) => {
+    if (newLength === 2 && !finishedHighlightTutorial.value) {
+        nextTick(() => {
+            startHighlightTour(() => {
+                localStorage.setItem('finishedHighlightTutorial', 'true');
+                finishedHighlightTutorial.value = true;
+            });
+        });
+    }
+})
+onMounted(() => {
+    document.addEventListener("click", onClickOutside);
+    finishedHighlightTutorial.value = localStorage.getItem("finishedHighlightTutorial") !== null
+});
 onUnmounted(() => document.removeEventListener("click", onClickOutside));
 
-/* -------------------------------------------------------
-   Input handling
-------------------------------------------------------- */
 function onKeydown(e) {
     if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
@@ -257,9 +268,6 @@ function onSubmit() {
     performSearch(q);
 }
 
-/* -------------------------------------------------------
-   URL + reference helpers
-------------------------------------------------------- */
 function normalizeUrl(url) {
     if (!url) return "";
     return url
@@ -291,17 +299,6 @@ function extractRefIndexes(snippetLinks, allRefs) {
     return indexes;
 }
 
-function parseTrailingRefCount(text) {
-    const match = text.match(/\+(\d+)\s*$/);
-    return match ? parseInt(match[1], 10) + 1 : 1;
-}
-
-/* -------------------------------------------------------
-   LaTeX flattening — AI Mode occasionally returns inline math
-   (e.g. "$\text{CO}_{2}$") instead of plain text. We don't
-   typeset it, we just strip the markup down to readable text
-   (e.g. "CO₂") so raw LaTeX source never reaches the UI.
-------------------------------------------------------- */
 const LATEX_SUBSCRIPTS = { 0: "₀", 1: "₁", 2: "₂", 3: "₃", 4: "₄", 5: "₅", 6: "₆", 7: "₇", 8: "₈", 9: "₉", x: "ₓ" };
 const LATEX_SUPERSCRIPTS = { 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹", "+": "⁺", "-": "⁻" };
 const LATEX_SYMBOLS = {
@@ -330,9 +327,6 @@ function flattenLatex(str) {
 
     let out = str;
 
-    // Strip $$...$$ / $...$ delimiters, but only when the enclosed
-    // content actually looks like LaTeX (contains a backslash) —
-    // otherwise leave plain "$" currency mentions untouched.
     out = out.replace(/\$\$([^$]*\\[^$]*)\$\$/g, (_, inner) => inner);
     out = out.replace(/\$([^$]*\\[^$]*)\$/g, (_, inner) => inner);
 
@@ -362,23 +356,39 @@ function flattenLatex(str) {
     return out;
 }
 
+
 function flattenTableData(rows) {
-    if (!Array.isArray(rows)) return rows;
-    return rows.map(row => {
-        if (!row || typeof row !== "object") return row;
+    if (!Array.isArray(rows) || rows.length === 0) return [];
+
+    if (!Array.isArray(rows[0])) {
+        return rows.map(row => {
+            if (!row || typeof row !== "object") return row;
+            const flatRow = {};
+            for (const [key, val] of Object.entries(row)) {
+                flatRow[key] = typeof val === "string" ? flattenLatex(val) : val;
+            }
+            return flatRow;
+        });
+    }
+
+    const cellText = (cell) => {
+        if (cell == null) return "";
+        if (typeof cell === "string") return flattenLatex(cell);
+        return flattenLatex(cell.snippet ?? cell.text ?? "");
+    };
+
+    const [headerRow, ...dataRows] = rows;
+    const columnNames = headerRow.map(cellText);
+
+    return dataRows.map(row => {
         const flatRow = {};
-        for (const [key, val] of Object.entries(row)) {
-            flatRow[key] = typeof val === "string" ? flattenLatex(val) : val;
-        }
+        columnNames.forEach((colName, idx) => {
+            flatRow[colName] = cellText(row[idx]);
+        });
         return flatRow;
     });
 }
 
-/* -------------------------------------------------------
-   Nested list-item flattening (list items can themselves be
-   sub-blocks like { text_blocks: [...] } instead of a flat
-   { text } / { snippet } string field)
-------------------------------------------------------- */
 function flattenTextBlocks(tbArray) {
     const lines = [];
     let links = [];
@@ -414,7 +424,10 @@ function flattenListItem(it) {
     if (typeof it === "string") return { text: flattenLatex(it.trim()), links: [] };
 
     if (it?.text ?? it?.snippet) {
-        return { text: flattenLatex(String(it.text ?? it.snippet).trim()), links: it.snippet_links || [] };
+        return {
+            text: flattenLatex(String(it.text ?? it.snippet).trim()),
+            links: it.snippet_links || [],
+        };
     }
 
     if (Array.isArray(it?.text_blocks)) {
@@ -428,144 +441,53 @@ function flattenListItem(it) {
     return { text: "", links: [] };
 }
 
-/* -------------------------------------------------------
-   NORMALIZATION
-------------------------------------------------------- */
+const JUNK_PARAGRAPH_SNIPPETS = ['Made with Google AIShareDownload'];
 function normalizeBlock(b, refs) {
     const text = flattenLatex(b.text ?? b.snippet ?? "");
     const snippet = flattenLatex(b.snippet ?? b.text ?? "");
-    const snippetLinks = b.snippet_links || [];
 
-    let refIndexes = extractRefIndexes(snippetLinks, refs);
+    const refIndexes = b.reference_indexes ?? extractRefIndexes(b.snippet_links, refs);
 
-    if (refIndexes.length > 0 && /\+\d+$/.test(snippet)) {
-        const count = parseTrailingRefCount(snippet);
-        const start = refIndexes[0];
-        refIndexes = Array.from({ length: count }, (_, i) => start + i);
+    if (b.type === 'paragraph' && JUNK_PARAGRAPH_SNIPPETS.includes((b.snippet ?? '').trim())) {
+        return null;
     }
 
-    // LIST BLOCK
     if (b.type === "list") {
         const rawItems = b.list || b.items || b.list_items || [];
 
-        const items = rawItems.map(it => {
+        const items = rawItems.map((it, idx) => {
             const flat = flattenListItem(it);
-            const itemText = flat.text;
-            const itemLinks = flat.links;
+            const isLast = idx === rawItems.length - 1;
 
-            let itemRefs = extractRefIndexes(itemLinks, refs);
-
-            if (itemRefs.length > 0 && /\+\d+$/.test(itemText)) {
-                const count = parseTrailingRefCount(itemText);
-                const start = itemRefs[0];
-                itemRefs = Array.from({ length: count }, (_, i) => start + i);
+            let itemRefs = it.reference_indexes ?? extractRefIndexes(flat.links, refs);
+            if (itemRefs.length === 0 && isLast) {
+                itemRefs = refIndexes;
             }
 
             return {
-                text: itemText,
-                snippet: itemText,
-                refIndexes: itemRefs
+                text: flat.text,
+                snippet: flat.text,
+                refIndexes: itemRefs,
             };
         });
 
-        return {
-            type: "list",
-            text,
-            snippet,
-            items,
-            refIndexes
-        };
+        return { type: "list", text, snippet, items, refIndexes };
     }
 
-    // PARAGRAPH / HEADING
     if (b.type === "paragraph" || b.type === "heading") {
-        return {
-            type: b.type,
-            text,
-            snippet,
-            items: [],
-            refIndexes
-        };
+        return { type: b.type, text, snippet, items: [], refIndexes };
     }
 
-    // TABLE BLOCK (future-proof)
     if (b.type === "table") {
         return {
             type: "table",
             tableData: flattenTableData(b.table || b.rows || []),
-            text,
-            snippet,
-            items: [],
-            refIndexes
+            text, snippet, items: [], refIndexes,
         };
     }
 
     return null;
 }
-
-/* -------------------------------------------------------
-   performSearch — now stable across all AI Mode schemas
-------------------------------------------------------- */
-// async function performSearch(q) {
-//   loading.value = true;
-//   error.value = "";
-
-//   let blocks = [];
-
-//   try {
-//     const API_BASE = import.meta.env.PROD
-//       ? window.location.origin
-//       : "http://localhost:3001";
-
-//     const url = new URL("/api/serp", API_BASE);
-
-//     url.searchParams.set("engine", "google_ai_mode");
-//     url.searchParams.set("q", q);
-
-//     if (!continuationToken.value) {
-//       url.searchParams.set("continuable", "true");
-//     } else {
-//       url.searchParams.set(
-//         "subsequent_request_token",
-//         continuationToken.value
-//       );
-//     }
-
-//     const resp = await fetch(url.toString());
-//     if (!resp.ok) throw new Error(`SerpApi responded with ${resp.status}`);
-
-//     const json = await resp.json();
-//     console.log("AI Mode raw JSON:", json);
-
-//     if (json.subsequent_request_token) {
-//       continuationToken.value = json.subsequent_request_token;
-//     }
-
-//     const refs = json.references || [];
-
-//     blocks = (json.text_blocks || [])
-//       .map(b => normalizeBlock(b, refs))
-//       .filter(Boolean);
-
-//     messages.value.push({
-//       role: "assistant",
-//       _blocks: blocks,
-//       sources: refs
-//     });
-
-//     scrollToBottom();
-//   } catch (err) {
-//     error.value = err.message || "AI Mode search failed";
-//   } finally {
-//     loading.value = false;
-
-//     emit("log", {
-//       timestamp: Date.now(),
-//       action: "ai-mode-query-sent",
-//       payload: { query: q, results: blocks }
-//     });
-//   }
-// }
 
 import { apiFetch } from "@/lib/api";
 import { useParticipant } from "@/composables/useParticipant";
@@ -613,12 +535,9 @@ async function performSearch(q) {
     }
 }
 
-/* -------------------------------------------------------
-  Source click handler
-------------------------------------------------------- */
 function emitSourceClick(src) {
     if (!src) return;
-    emit("link-clicked", { title: src.title, link: src.link });
+    emit("link-clicked", { title: src.title, body: '', link: src.link });
     window.open(src.link, "_blank", "noopener,noreferrer");
 
     emit("log", {
@@ -627,3 +546,11 @@ function emitSourceClick(src) {
     });
 }
 </script>
+<style>
+.tour-selection-mark {
+    background-color: #c7d2fe;
+    border-radius: 2px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+</style>

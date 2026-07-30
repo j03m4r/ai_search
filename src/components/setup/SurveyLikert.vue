@@ -24,7 +24,7 @@
                     <div
                         v-for="option in props.likertOptions"
                         :key="`val_${option.val}`"
-                        class="w-full flex justify-center py-4 h-full border-b-2 font-semibold! text-center"
+                        class="w-full flex justify-center py-4 h-full text-lg border-b-2 font-semibold! text-center"
                         :class="valHovered === option.val ? 'border-indigo-500' : 'border-transparent'"
                     >
                         {{ option.label }}
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div v-for="(statement, idx) in props.statements" class="flex w-full gap-x-4 justify-center h-full items-center">
-            <p class="font-semibold! text-wrap min-w-[350px] max-w-[350px] pl-4 text-lg">
+            <p class="font-semibold! text-wrap min-w-[350px] max-w-[350px] pl-4 text-xl">
             {{ statement }}
             </p>
             <div class="flex w-full justify-between items-center h-full gap-x-4 py-2">

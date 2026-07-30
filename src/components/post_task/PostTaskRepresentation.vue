@@ -30,7 +30,7 @@
 
         <div class="text-gray-600 text-2xl gap-y-6 flex flex-col">
             <p>
-                Now that you have searched and built your map, describe again what you think are the most important higher-level dimensions/considerations for adopting nuclear energy.
+                Now that you have finished the task, <b class="font-bold!">try to recall and redevelop your map of the important considerations for adopting nuclear energy.</b>
             </p>
 
             <p>

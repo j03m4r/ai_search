@@ -6,24 +6,19 @@
 <template v-else-if="step === 4">
     <div class="flex flex-col items-center w-7xl h-screen">
         <div class="sticky top-0 w-full flex justify-center items-center bg-[#faf9f6] py-6">
-            <h2 class="text-3xl font-bold! sticky top-0 w-7xl bg-[#faf9f6] text-gray-600">Task Description</h2>
+            <h2 class="text-3xl font-bold! sticky top-0 w-7xl bg-[#faf9f6] text-gray-600">Overview of Study</h2>
         </div>
         <div class="text-gray-600 flex flex-col gap-y-6 w-full">
             <p class="text-2xl">
-                Your task is to search for and map out the competing considerations for a policy decision:
-                <b class="font-bold!">whether to adopt nuclear energy.</b>
+                <b class="font-bold!">Pre-task questionnaire (3-5 minutes):</b> here we&apos;ll ask a few questions related to AI, introduce you to the main search task, and you will build out your initial concept map for the search task
             </p>
 
             <p class="text-2xl">
-                Major policy decisions such as this one involve weighing many competing considerations: for example,
-                scientific, economic, social, and political. Policymakers who understand a diverse set of
-                considerations tend to make better decisions than those who only see one side.
+                <b class="font-bold!">Search and sensemaking task (~10 minutes):</b> here you will execute the search task and iterate on your initial concept map as you go
             </p>
 
             <p class="text-2xl">
-                <b class="font-bold!">We will provide you with a search tool, use this tool to explore what is at stake with the adoption of nuclear energy.</b>
-                As you search, you should build out your concept map. Organize this map around higher-level
-                dimensions (major categories of concern) and support each one with specific details you find.
+                <b class="font-bold!">Post-task questionnaire (3-5 minutes):</b> to wrap up we will ask you a few questions related to your experience and what you learned
             </p>
         </div>
 

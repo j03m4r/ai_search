@@ -18,13 +18,13 @@
         <ul v-if="results.length" class="list-none px-2 py-4">
             <p v-if="(totalResults > pageSize) && !loading" class="text-sm text-gray-500 mb-3!">Page {{ currentPage }} /
                 {{ lastPage }}</p>
-            <li v-for="item in results" :key="item.cacheId || item.link" class="border-b border-gray-300 mb-4! pb-4">
+            <li v-for="(item, idx) in results" :key="item.cacheId || item.link" class="border-b border-gray-300 mb-4! pb-4" :id="idx===0?'tour-highlight':undefined">
                 <a :href="item.link" target="_blank" rel="noreferrer noopener" @click="emitLink(item)"
                     @auxclick="emitLink(item)">
                     <h3 v-html="item.title" class="text-blue-600 hover:underline text-base font-medium"></h3>
+                    <small v-if="item.formattedUrl" class="text-xs text-gray-400 -mt-2!">{{ item.formattedUrl }}</small>
                 </a>
-                <p v-html="item.snippet" class="text-sm text-gray-700 mt-1"></p>
-                <small v-if="item.formattedUrl" class="text-xs text-gray-400">{{ item.formattedUrl }}</small>
+                <p v-html="item.snippet" class="text-sm text-gray-700 mt-1!" :class="idx===0&&!finishedHighlightTutorial ? 'tour-selection-mark' : ''"></p>
             </li>
         </ul>
 
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch, nextTick, onMounted } from 'vue';
 
 const query = ref('');
 const results = ref([]);
@@ -54,12 +54,29 @@ const totalResults = ref(0);
 const pageSize = 10;
 const currentPage = ref(1);
 const hasSearched = ref(false);
+const finishedHighlightTutorial = ref(false);
 
 const lastPage = computed(() =>
     Math.max(1, Math.ceil(totalResults.value / pageSize))
 );
 
 const emit = defineEmits(['link-clicked', 'log']);
+
+import { useTour } from "@/composables/useTour";
+const { startHighlightTour } = useTour()
+watch(() => results.value.length, (newLength) => {
+    if (!finishedHighlightTutorial.value) {
+        nextTick(() => {
+            startHighlightTour(() => {
+                localStorage.setItem('finishedHighlightTutorial', 'true');
+                finishedHighlightTutorial.value = true;
+            });
+        });
+    }
+})
+onMounted(() => {
+    finishedHighlightTutorial.value = localStorage.getItem("finishedHighlightTutorial") !== null
+});
 
 function buildResultItem(item) {
     return {
@@ -75,61 +92,6 @@ function onSubmit() {
     performSearch(1);
 }
 
-// async function performSearch(page = 1) {
-//     const q = query.value.trim();
-//     if (!q) return;
-
-//     loading.value = true;
-//     error.value = '';
-//     hasSearched.value = true;
-//     results.value = [];
-
-//     const start = (page - 1) * pageSize;
-
-//     try {
-//         const API_BASE = import.meta.env.PROD
-//             ? window.location.origin
-//             : "http://localhost:3001";
-
-//         const url = new URL("/api/serp", API_BASE);
-//         url.searchParams.set('engine', 'google');
-//         url.searchParams.set('q', q);
-//         url.searchParams.set('start', String(start));
-//         url.searchParams.set('num', String(pageSize));
-
-//         const resp = await fetch(url.toString());
-//         if (!resp.ok) {
-//             throw new Error(`SerpApi responded with ${resp.status}`);
-//         }
-
-//         const json = await resp.json();
-//         const items = json.organic_results || [];
-
-//         results.value = items.map(buildResultItem);
-
-//         totalResults.value = json.search_information?.total_results || items.length;
-
-//         console.log(json)
-
-//         currentPage.value = page;
-
-//         emit('log', {
-//             timestamp: Date.now(),
-//             action: 'traditional-search-returned',
-//             payload: {
-//                 query: q,
-//                 resultsCount: results.value.length,
-//                 resultContent: results.value.map(r => `${r.title} ${r.snippet}`),
-//                 resultURL: results.value.map(r => `${r.link}`),
-//                 page: page
-//             }
-//         });
-//     } catch (err) {
-//         error.value = err.message || 'Search failed';
-//     } finally {
-//         loading.value = false;
-//     }
-// }
 import { apiFetch } from "@/lib/api";
 import { useParticipant } from "@/composables/useParticipant";
 
@@ -193,6 +155,7 @@ function changePage(nextPage) {
 function emitLink(item) {
     emit('link-clicked', {
         title: item.title,
+        body: '',
         link: item.link
     });
 
@@ -202,3 +165,11 @@ function emitLink(item) {
     });
 }
 </script>
+<style>
+.tour-selection-mark {
+    background-color: #c7d2fe; /* indigo-200 */
+    border-radius: 2px;
+    box-decoration-break: clone; /* keeps rounded corners consistent across wrapped lines */
+    -webkit-box-decoration-break: clone;
+}
+</style>

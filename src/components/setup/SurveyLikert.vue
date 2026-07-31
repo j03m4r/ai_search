@@ -19,7 +19,7 @@
     <div class="w-full flex flex-col text-gray-600">
         <div class="w-full flex flex-col">
             <div className="flex w-full justify-between">
-                <div className="min-w-[350px]"></div>
+                <div className="min-w-87.5"></div>
                 <div className="flex w-full justify-between items-center h-full gap-x-4 pl-4">
                     <div
                         v-for="option in props.likertOptions"
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div v-for="(statement, idx) in props.statements" class="flex w-full gap-x-4 justify-center h-full items-center">
-            <p class="font-semibold! text-wrap min-w-[350px] max-w-[350px] pl-4 text-xl">
+            <p class="font-semibold! text-wrap min-w-87.5 max-w-87.5 pl-4 text-xl">
             {{ statement }}
             </p>
             <div class="flex w-full justify-between items-center h-full gap-x-4 py-2">

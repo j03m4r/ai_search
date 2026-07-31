@@ -1,4 +1,3 @@
-// composables/useParticipant.ts
 import { ref } from "vue";
 import { apiFetch } from "@/lib/api";
 
@@ -10,7 +9,12 @@ async function initParticipant() {
     const stored = localStorage.getItem("participant_id");
 
     if (!stored) {
-        const res = await apiFetch("/api/participant", { method: "POST" });
+        const urlParams = new URLSearchParams(window.location.search);
+        const prolificPid = urlParams.get("PROLIFIC_PID");
+        const studyId = urlParams.get("STUDY_ID")
+        const sessionId = urlParams.get("SESSION_ID")
+
+        const res = await apiFetch("/api/participant", { method: "POST", body: JSON.stringify({ prolific_pid: prolificPid, study_id: studyId, session_id: sessionId }) });
         const data = await res.json();
         localStorage.setItem("participant_id", String(data.participant_id));
         localStorage.setItem("participant_token", data.token);
@@ -63,6 +67,13 @@ async function screenout() {
     });
 }
 
+async function getCompletionCode() {
+    const res = await apiFetch(`/api/${participantId.value}/competion_code`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.completion_code ?? "";
+}
+
 async function reject() {
     phase.value = "rejected"
     await apiFetch(`/api/participant/${participantId.value}/status`, {
@@ -104,5 +115,5 @@ async function fetchSubmittedAt() {
 }
 
 export function useParticipant() {
-    return { participantId, condition, phase, initParticipant, submitPreTaskData, submitPostTaskData, submitLog, fetchSubmittedAt, screenout, reject };
+    return { participantId, condition, phase, initParticipant, submitPreTaskData, submitPostTaskData, submitLog, fetchSubmittedAt, screenout, reject, getCompletionCode };
 }

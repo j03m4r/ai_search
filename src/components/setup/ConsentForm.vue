@@ -268,10 +268,14 @@
     </div>
   </div>
   <div
-    class="shadow flex justify-center items-center border p-1 rounded-2xl bg-white border-gray-300 mb-12! mt-6!">
+    class="shadow flex justify-center items-center border p-1 rounded-2xl bg-white border-gray-300 mb-12! mt-6! gap-x-2">
+    <a href="https://app.prolific.com/submissions/complete?cc=C12UWYZ2"
+      class="px-6 py-6 bg-indigo-500 text-white rounded-xl flex gap-x-2 justify-center items-center text-lg cursor-pointer hover:bg-indigo-600 transition-colors">
+      I do not consent
+    </a>
     <button @click="emit('nextStep')"
       class="px-6 py-6 bg-indigo-500 text-white rounded-xl flex gap-x-2 justify-center items-center text-lg cursor-pointer hover:bg-indigo-600 transition-colors">
-      I consent to participate in this study
+      I consent
     </button>
   </div>
 </template>

@@ -9,7 +9,7 @@
                 </div>
 
                 <p class="text-gray-600 text-2xl w-full mb-3!">
-                    Unfortunately, you do not meet our inclusion criteria and have been screened out. Thank you for your time, here is your completion code:
+                    Unfortunately, you do not meet our inclusion criteria and have been screened out. Thank you for your time, here is your completion code: CEORMURU
                 </p>
         </div>
     </div>

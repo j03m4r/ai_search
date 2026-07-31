@@ -9,7 +9,7 @@
                 </div>
 
                 <p class="text-gray-600 text-2xl w-full mb-3!">
-                    Unfortunately, your response has been rejected because you have failed two instruction manipulation attention checks. Thank you for your time.
+                    Unfortunately, your response has been rejected because you have failed two instruction manipulation attention checks. Thank you for your time. Here is your code: CEC3VU7C
                 </p>
         </div>
     </div>

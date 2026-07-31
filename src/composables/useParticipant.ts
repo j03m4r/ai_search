@@ -68,7 +68,7 @@ async function screenout() {
 }
 
 async function getCompletionCode() {
-    const res = await apiFetch(`/api/${participantId.value}/competion_code`);
+    const res = await apiFetch(`/api/participant/${participantId.value}/competion_code`);
     if (!res.ok) return null;
     const data = await res.json();
     return data.completion_code ?? "";

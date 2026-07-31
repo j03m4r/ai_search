@@ -68,7 +68,7 @@ async function screenout() {
 }
 
 async function getCompletionCode() {
-    const res = await apiFetch(`/api/participant/${participantId.value}/competion_code`);
+    const res = await apiFetch(`/api/participant/${participantId.value}/completion_code`);
     if (!res.ok) return null;
     const data = await res.json();
     return data.completion_code ?? "";
@@ -79,6 +79,14 @@ async function reject() {
     await apiFetch(`/api/participant/${participantId.value}/status`, {
         method: "POST",
         body: JSON.stringify({ status: "rejected" }),
+    });
+}
+
+async function noConsent() {
+    phase.value = "no_consent"
+    await apiFetch(`/api/participant/${participantId.value}/status`, {
+        method: "POST",
+        body: JSON.stringify({ status: "no_consent" }),
     });
 }
 
@@ -115,5 +123,5 @@ async function fetchSubmittedAt() {
 }
 
 export function useParticipant() {
-    return { participantId, condition, phase, initParticipant, submitPreTaskData, submitPostTaskData, submitLog, fetchSubmittedAt, screenout, reject, getCompletionCode };
+    return { participantId, condition, phase, initParticipant, submitPreTaskData, submitPostTaskData, submitLog, fetchSubmittedAt, screenout, reject, getCompletionCode, noConsent };
 }

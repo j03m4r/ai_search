@@ -11,7 +11,7 @@
     });
 
     const emit = defineEmits<{
-        (e: 'finish'): void;
+        (e: 'nextStep'): void;
         (e: 'updatePostTaskRepresentation', representation: category[]): void;
     }>();
 
@@ -45,9 +45,9 @@
         <div class="mb-40!"></div>
         <div
             class="shadow fixed bottom-12 flex justify-center items-center border p-1 rounded-2xl bg-white border-gray-300">
-            <button @click="emit('finish')" :disabled="!validToBegin"
+            <button @click="emit('nextStep')" :disabled="!validToBegin"
                 class="px-6 py-6 bg-indigo-500 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-xl flex gap-x-2 justify-center items-center text-lg cursor-pointer hover:bg-indigo-600 transition-colors">
-                Finish
+                Proceed
             </button>
         </div>
 

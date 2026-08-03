@@ -5,6 +5,7 @@
     import PostTaskRepresentation from "./PostTaskRepresentation.vue";
     import { category } from "../setup/InitialRepresentation.vue";
     import { useParticipant } from "@/composables/useParticipant.js";
+import Feedback from "./Feedback.vue";
 
     const { submitPostTaskData } = useParticipant()
 
@@ -12,6 +13,7 @@
     const tlx = ref(-1)
     const knowledgeIncrease = ref(-1)
     const representation = ref<category[]>([]);
+    const feedback = ref<string|null>("");
 
     function nextStep() {
         step.value++;
@@ -42,7 +44,8 @@
         await submitPostTaskData({
             knowledge_increase: knowledgeIncrease.value,
             NASA_TLX: tlx.value,
-            representation: representation.value
+            representation: representation.value,
+            feedback: feedback.value || ""
         })
     }
 </script>
@@ -52,7 +55,8 @@
         <div class="w-7xl flex flex-col items-center justify-center">
             <TLX v-if="step === 0" @next-step="nextStep" @update-tlx="(_tlx: number) => { tlx = _tlx, setLocalStorage('tlx', _tlx.toString()) }" />
             <KnowledgeIncrease v-else-if="step === 1" @next-step="nextStep" @update-knowledge-increase="(_knowledgeIncrease: number) => { knowledgeIncrease = _knowledgeIncrease, setLocalStorage('knowledge_increase', _knowledgeIncrease.toString()) }" />
-            <PostTaskRepresentation v-else @finish="finish" @update-post-task-representation="(_representation: category[]) => { representation = _representation, setLocalStorage('post_task_representation', JSON.stringify(_representation)) }" />
+            <PostTaskRepresentation v-else-if="step === 2" @next-step="nextStep" @update-post-task-representation="(_representation: category[]) => { representation = _representation, setLocalStorage('post_task_representation', JSON.stringify(_representation)) }" />
+            <Feedback v-else @finish="finish" @updateFeedback="(_feedback: string) => { feedback = _feedback }" />
         </div>
     </div>
 </template>

@@ -447,6 +447,7 @@
     import { useTour } from '@/composables/useTour.js';
     const { startRepresentationTour } = useTour();
     function tutorial() {
+        addLog("tutorial-clicked");
         startRepresentationTour(spawnTourExample, despawnTourExample, () => {});
     }
 

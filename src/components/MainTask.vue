@@ -163,7 +163,7 @@
                     <label class="text-xs uppercase tracking-wide">Details</label>
                     <textarea :value="pendingLinkEvidence.body" @input="pendingLinkEvidence.body = $event.target.value"
                         placeholder="Add information here... Details, reasoning for inclusion, etc."
-                        class="w-full min-h-20 resize-y text-sm border border-gray-300 rounded p-2 bg-white outline-none mt-0.5"></textarea>
+                        class="w-full min-h-20 resize-y text-sm border border-gray-400 rounded p-2 bg-white outline-none mt-0.5"></textarea>
                 </div>
 
                 <div class="flex w-full justify-between gap-3!">

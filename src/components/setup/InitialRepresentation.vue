@@ -84,7 +84,7 @@
         </div>
 
         <div ref="canvasWrapper" class="w-full flex h-[60vh]">
-            <LeftOrganizer :hide-buttons="true" @update-representation="updateRepresentation" />
+            <LeftOrganizer :hide-buttons="true" :initial-rep="true" @update-representation="updateRepresentation" />
         </div>
 
         <div class="mb-40!"></div>

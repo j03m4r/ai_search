@@ -22,11 +22,11 @@
 
             <p class="text-2xl">
                 <b class="font-bold!">We will provide you with a search tool, use this tool to explore what is at stake with the adoption of nuclear energy.</b>
-                As you search, you should build out a concept map. Organize this map around higher-level
+                As you search, you will build out and develop a concept map. Organize this map around higher-level
                 dimensions (major categories of concern) and support each one with specific details you find.
             </p>
 
-            <p class="text-2xl font-bold!">
+            <p class="text-2xl font-bold! text-red-500">
                 A successful completion of this study requires that you conduct searches and create a concept map. Gibberish, irrelevant text, or searches irrelevant to the topic of nuclear energy will disqualify your participation.
             </p>
         </div>

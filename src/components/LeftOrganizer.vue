@@ -13,9 +13,12 @@
     const showTrash = ref(false);
     const pendingCategory = ref(false);
     const pendingCategoryTitle = ref('');
+    const tutorialViewed = ref(false);
+    const tutorialActive = ref(false);
 
     const props = defineProps({
         hideButtons: { type: Boolean, default: false },
+        initialRep: { type: Boolean, default: false }
     });
 
     const emit = defineEmits(["updateRepresentation"]);
@@ -176,7 +179,7 @@
             id,
             type: 'evidence',
             position: { x: 200 + Math.random() * 200, y: 200 + Math.random() * 200 },
-            data: { text: '[edit label here]', body: '', source: 'User', expanded: false },
+            data: { text: '[edit text here]', body: '', source: 'User', expanded: false },
             dragHandle: '.drag-handle',
             style: { width: '220px' },
         }];
@@ -452,12 +455,15 @@
         nodes.value = nodes.value.filter(
             (n) => n.id !== TOUR_CATEGORY_ID && n.id !== TOUR_EVIDENCE1_ID && n.id !== TOUR_EVIDENCE2_ID
         );
+        tutorialActive.value = false;
+        tutorialViewed.value = true;
     }
 
     import { useTour } from '@/composables/useTour.js';
     const { startRepresentationTour } = useTour();
     function tutorial() {
         addLog("tutorial-clicked");
+        tutorialActive.value = true;
         startRepresentationTour(spawnTourExample, despawnTourExample, () => {});
     }
 
@@ -627,18 +633,18 @@
                 </div>
             </template>
 
-            <Panel position="top-left">
+            <Panel position="top-left" class="relative">
                 <div class="flex gap-2 bg-white rounded-xl shadow-md border border-gray-300 px-3 py-2">
-                    <button @click="startCategoryAdd" id="tour-add-cat"
-                        class="px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 border-indigo-500 text-white rounded-lg font-semibold! cursor-pointer transition-colors flex gap-x-1.5">
+                    <button @click="startCategoryAdd" :disabled="tutorialActive||(props.initialRep&&!tutorialViewed)" id="tour-add-cat"
+                        class="disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 border-indigo-500 text-white rounded-lg font-semibold! cursor-pointer transition-colors flex gap-x-1.5">
                         <svg width="12" class="fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                             <path
                                 d="M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z" />
                         </svg>
                         Category
                     </button>
-                    <button @click="addEvidence" id="tour-add-ev"
-                        class="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 border-amber-400 rounded-lg font-semibold! cursor-pointer transition-colors flex gap-x-1.5">
+                    <button @click="addEvidence" :disabled="tutorialActive||(props.initialRep&&!tutorialViewed)" id="tour-add-ev"
+                        class="disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 bg-amber-400 hover:bg-amber-500 border-amber-400 rounded-lg font-semibold! cursor-pointer transition-colors flex gap-x-1.5">
                         <svg width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                             <path
                                 d="M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z" />
@@ -653,7 +659,7 @@
                         </svg>
                         Toggle Trash
                     </button>
-                    <button @click="tutorial"
+                    <button @click="tutorial" :disabled="tutorialActive"
                         class="px-3 py-1.5 hover:bg-gray-100 border border-gray-300 rounded-lg cursor-pointer transition-colors flex gap-x-1.5">
                         Tutorial
                     </button>
@@ -663,6 +669,9 @@
                         @mouseenter="showTooltip = true" @mouseleave="showTooltip = false">
                         Conclude Task
                     </button>
+                </div>
+                <div v-if="props.initialRep&&!tutorialViewed&&!tutorialActive" class="absolute top-full mt-2! bg-white border-gray-300 border shadow-md px-3 py-2 text-center rounded-xl text-red-500 font-semibold! pointer-events-none">
+                    You must complete the tutorial before proceeding with the task. Click "Tutorial"
                 </div>
             </Panel>
         </VueFlow>

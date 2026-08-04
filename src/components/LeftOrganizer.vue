@@ -11,6 +11,8 @@
     const log = ref([]);
     const trash = ref([]);
     const showTrash = ref(false);
+    const pendingCategory = ref(false);
+    const pendingCategoryTitle = ref('');
 
     const props = defineProps({
         hideButtons: { type: Boolean, default: false },
@@ -110,7 +112,11 @@
         submitLog(type, timestamp, payload)
     }
 
-    function addCategory() {
+    function addCategory(title) {
+        // Clear the pending category state
+        pendingCategory.value = false;
+        pendingCategoryTitle.value = '';
+
         const id = crypto.randomUUID();
         nodes.value = [
             ...nodes.value,
@@ -118,13 +124,17 @@
                 id,
                 type: 'category',
                 position: { x: 80 + Math.random() * 200, y: 80 + Math.random() * 200 },
-                data: { label: "New Category", items: [], importance: 0 },
+                data: { label: title, items: [], importance: 0 },
                 dragHandle: '.drag-handle',
                 style: { width: '300px' },
             }
         ];
 
-        addLog('category-created', { id, title: "New Category", importance: 0 });
+        addLog('category-created', { id, title: title, importance: 0 });
+    }
+
+    function startCategoryAdd() {
+        pendingCategory.value = true;
     }
 
     function deleteCategory(id) {
@@ -166,7 +176,7 @@
             id,
             type: 'evidence',
             position: { x: 200 + Math.random() * 200, y: 200 + Math.random() * 200 },
-            data: { text: 'New Evidence', body: '', source: 'User', expanded: false },
+            data: { text: '[edit label here]', body: '', source: 'User', expanded: false },
             dragHandle: '.drag-handle',
             style: { width: '220px' },
         }];
@@ -333,7 +343,7 @@
             id,
             type: 'evidence',
             position: { x: 160 + Math.random() * 200, y: 160 + Math.random() * 200 },
-            data: { text: payload.title || payload.link || 'New Link', url: payload.link, source: payload.link || 'User', body: payload.body, expanded: false },
+            data: { text: payload.title || payload.link || 'New Link', url: payload.link, source: payload.link || 'User', body: payload.body, expanded: true },
             dragHandle: '.drag-handle',
             style: { width: '220px' },
         }];
@@ -455,6 +465,13 @@
 </script>
 
 <template>
+    <div class="w-screen h-screen fixed top-0 left-0 z-50 bg-black/50 flex items-center justify-center" v-if="pendingCategory">
+        <div class="bg-white p-4 rounded-xl shadow-lg w-xs flex flex-col justify-center items-start gap-y-2!">
+            <p class="text-sm text-gray-700">Enter a title for this category (you can edit this later too)</p>
+            <input type="text" class="border border-gray-300 rounded-lg px-3 py-1.5 w-full" placeholder="Category title..." v-model="pendingCategoryTitle" />
+            <button @click="() => addCategory(pendingCategoryTitle)" :disabled="pendingCategoryTitle.length < 2" class="disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer w-full bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">Submit</button>
+        </div>
+    </div>
     <div class="w-full h-full relative p-2">
         <VueFlow v-model:nodes="nodes" :nodes-connectable="true" :connect-on-click="false" :zoom-on-scroll="true"
             :zoom-on-pinch="false" :zoom-on-double-click="false" :pan-on-drag="true" :pan-on-scroll="false"
@@ -560,7 +577,7 @@
             </template>
 
             <template #node-evidence="{ id, data }">
-                <div class="bg-amber-50 border border-amber-300 rounded-lg shadow-sm overflow-hidden w-65">
+                <div class="bg-amber-50 border border-amber-300 rounded-lg shadow-sm overflow-hidden w-65 z-30">
                     <div
                         class="drag-handle flex items-center justify-between gap-2 px-4 py-3 cursor-grab active:cursor-grabbing">
                         <button @click.stop="data.expanded = !data.expanded"
@@ -612,7 +629,7 @@
 
             <Panel position="top-left">
                 <div class="flex gap-2 bg-white rounded-xl shadow-md border border-gray-300 px-3 py-2">
-                    <button @click="addCategory" id="tour-add-cat"
+                    <button @click="startCategoryAdd" id="tour-add-cat"
                         class="px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 border-indigo-500 text-white rounded-lg font-semibold! cursor-pointer transition-colors flex gap-x-1.5">
                         <svg width="12" class="fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                             <path

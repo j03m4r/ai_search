@@ -25,6 +25,10 @@
                 As you search, you should build out your concept map. Organize this map around higher-level
                 dimensions (major categories of concern) and support each one with specific details you find.
             </p>
+
+            <p class="text-2xl font-bold!">
+                A successful completion of this study requires that you conduct searches and create a concept map. Gibberish, irrelevant text, or searches irrelevant to the topic of nuclear energy will disqualify your participation.
+            </p>
         </div>
 
         <div

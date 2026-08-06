@@ -46,8 +46,9 @@
 <template v-else-if="step === 5">
     <div class="w-screen h-screen fixed top-0 left-0 bg-black/50 flex items-center justify-center z-100" v-if="pendingStart">
         <div class="bg-white p-4 rounded-xl shadow-lg w-lg flex flex-col justify-center items-start gap-y-6!">
-            <p class="text-xl font-semibold!">You are about to start the search task.</p>
-            <p class="text-xl">Remember, you should build out, expand, and change your initial concept map to accommodate for new factors you discover while searching.</p>
+            <p class="text-xl font-bold!">You are about to start the search task.</p>
+            <p class="text-xl">You have to build out your concept map to represent the critical factors influencing nuclear energy adoption. You should conduct searches using our tool (coming up) to develop your understanding and expand this map. <b class="underline">Both searching and concept-mapping are required parts of the task.</b></p>
+            <p class="text-xl font-bold! text-green-800">Remember, we're looking for the top 5% of task performers. We will manually review each submission for search engagement and concept mapping. These top 5% people will receive a $10 bonus!</p>
             <button @click="emit('begin')" class="cursor-pointer w-full bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">Start search task</button>
         </div>
     </div>

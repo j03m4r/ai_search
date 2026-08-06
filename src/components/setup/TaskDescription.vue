@@ -22,7 +22,7 @@
 
             <p class="text-2xl">
                 <b class="font-bold!">We will provide you with a search tool, use this tool to explore what is at stake with the adoption of nuclear energy.</b>
-                As you search, you will build out and develop a concept map. Organize this map around higher-level
+                As you search, you will build out a concept map. Organize this map around higher-level
                 dimensions (major categories of concern) and support each one with specific details you find.
             </p>
 

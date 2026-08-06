@@ -98,6 +98,7 @@
         emit('updateRepresentation', categories)
     }
 
+
     function addLog(type, payload = {}) {
         _updateRepresentation();
 
@@ -113,6 +114,11 @@
         log.value.push(entry);
 
         submitLog(type, timestamp, payload)
+
+        if (type == "traditional-search-returned" || type == "ai-mode-query-sent") {
+            const numSearches = parseInt(localStorage.getItem("numSearches")) || 0
+            localStorage.setItem("numSearches", numSearches + 1)
+        }
     }
 
     function addCategory(title) {
@@ -374,7 +380,11 @@
     }
 
     function confirmFinish() {
-        const ok = window.confirm("Are you sure you want to finish the task?");
+        const numQueries = parseInt(localStorage.getItem("numSearches")) || 0
+        const confirmText = numQueries < 3 ? `You have only performed ${numQueries} searches. Remember, faithful engagement is required for compensation. Are you sure you want to finish the task?` : 
+            "Are you sure you want to finish the task?";
+
+        const ok = window.confirm(confirmText);
         if (!ok) return;
 
         // Build a full snapshot of the current state
@@ -475,7 +485,10 @@
         <div class="bg-white p-4 rounded-xl shadow-lg w-xs flex flex-col justify-center items-start gap-y-2!">
             <p class="text-sm text-gray-700">Enter a title for this category (you can edit this later too)</p>
             <input type="text" class="border border-gray-300 rounded-lg px-3 py-1.5 w-full" placeholder="Category title..." v-model="pendingCategoryTitle" />
-            <button @click="() => addCategory(pendingCategoryTitle)" :disabled="pendingCategoryTitle.length < 2" class="disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer w-full bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">Submit</button>
+            <div class="flex w-full items-center justify-center gap-x-2!">
+                <button @click="() => { pendingCategory = false, pendingCategoryTitle = '' }" class="cursor-pointer w-full bg-gray-200 text-black px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">Cancel</button>
+                <button @click="() => addCategory(pendingCategoryTitle)" :disabled="pendingCategoryTitle.length < 2" class="disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer w-full bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">Submit</button>
+            </div>
         </div>
     </div>
     <div class="w-full h-full relative p-2">
